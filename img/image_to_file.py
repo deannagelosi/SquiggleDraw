@@ -4,6 +4,8 @@
 # and convert it to a header file for use with printBitmap().
 #
 # source: https://github.com/adafruit/Adafruit-Thermal-Printer-Library/blob/master/python/image_to_file.py
+#
+# max image width = 384 px
 
 import math
 import argparse
@@ -38,24 +40,20 @@ for y in range(img.height):
             byte |= p << (7-shift)
         img_bytes.append(byte)
 
-# write header file
-header_file = NAME+'.h'
+# write .py file for Adafruit thermal printer
+header_file = NAME+'.py'
 print("Writing header file", header_file)
 with open(header_file, 'w') as fp:
-    fp.write("#ifndef _{}_h_\n".format(NAME))
-    fp.write("#define _{}_h_\n\n".format(NAME))
-    fp.write("#define {}_width {}\n".format(NAME, img.width))
-    fp.write("#define {}_height {}\n\n".format(NAME, img.height))
-    fp.write("static const uint8_t PROGMEM {}_data[] = ".format(NAME))
-    fp.write("{\n")
+    fp.write("width = 384\n")
+    fp.write("height = 259\n")
+    fp.write("data = [\n")
     row_count = 0
     for b in img_bytes:
-        fp.write("0x{:02x}, ".format(b))
+        fp.write("0x{:02x},".format(b))
         row_count += 1
         if row_count >= 12:
             fp.write("\n")
             row_count = 0
-    fp.write("};\n")
-    fp.write("\n#endif // _{}_h_\n".format(NAME))
+    fp.write("]\n")
 
 print("DONE.")
