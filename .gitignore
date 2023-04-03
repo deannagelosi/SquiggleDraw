@@ -1,2 +1,5 @@
+# api key and url
+api_config.json
+
+# python files
 __pycache__
-node_modules/
