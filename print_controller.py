@@ -38,10 +38,10 @@ def main():
     print("pre data: ")
     read_data(cur)
     
-    json_test = {
+    json_test = [{
         "datetime": "997744",
         "author": "Pangur"
-    }
+    }]
 
     insert_data(cur, json_test)
 
