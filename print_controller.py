@@ -53,11 +53,14 @@ def main():
     conn.close()
 
 def insert_data(cur, json_data):
+    # Load JSON data
+    # data = json.loads(json_data)
+
     # Prepare the INSERT query template
     query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
 
     # Check if data is a list (multiple records) or a dict (single record)
-    for record in data:
+    for record in json_data:
         cur.execute(query, (record['datetime'], record['author']))
 
 def read_data(cur):
