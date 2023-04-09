@@ -3,22 +3,6 @@ import psycopg2
 import json
 
 def main():
-    # Replace these with your actual database credentials
-    db_name = "squiggle_db"
-    db_user = "admin"
-    db_password = "admin"
-    db_host = "localhost"
-    db_port = "5432"
-
-    # Connect to the database
-    conn = psycopg2.connect(
-        dbname=db_name,
-        user=db_user,
-        password=db_password,
-        host=db_host,
-        port=db_port
-    )
-
     # Load API info
     with open('api_config.json', 'r') as file:
         config = json.load(file)
@@ -26,29 +10,51 @@ def main():
     # make API request
     response = get_request(config)
 
-    # Create a cursor object to interact with the database
-    cur = conn.cursor()
+    data = json.loads(response.json()["body"])
 
-    print("pre data: ")
-    read_data(cur)
+    print(data)
     
-    json_test = [{
-        "datetime": "2023-04-09T14:30:00",
-        "author": "Pangur"
-    }]
+    if data:
+        # source: https://stackoverflow.com/questions/17915117/nested-dictionary-comprehension-python
+        result = [
+            {key: value for key, value in d.items() if key != "new_squiggle"}
+            for d in data
+        ]
+    else:
+        result = []
 
-    insert_data(cur, json_test)
+    print(result)
+
+    # Open connection to db
+    cursor, db = db_connect()
+
+    # json_test = [{
+    #     "datetime": "2023-04-09T14:30:00",
+    #     "author": "Pangur"
+    # }]
+
+    insert_data(cursor, result)
 
     # Commit the transaction
-    conn.commit()
+    db.commit()
 
-    print("post data: ")
-    read_data(cur)
+    cursor.close()
+    db.close()
 
-    cur.close()
-    conn.close()
+def db_connect():
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname = "squiggle_db",
+        user = "admin",
+        password = "admin",
+        host = "localhost",
+        port = "5432"
+    )
 
-    print(response.json())
+    # Create a cursor object to interact with the database
+    cursor = conn.cursor()
+
+    return cursor, conn
 
 def get_request(config):
     # makes AWS API request using key and url
