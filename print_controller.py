@@ -53,9 +53,6 @@ def main():
     conn.close()
 
 def insert_data(cur, json_data):
-    # Load JSON data
-    data = json.loads(json_data)
-
     # Prepare the INSERT query template
     query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
 
