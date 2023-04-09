@@ -39,7 +39,7 @@ def main():
     read_data(cur)
     
     json_test = [{
-        "datetime": "997744",
+        "datetime": "2023-04-09T14:30:00",
         "author": "Pangur"
     }]
 
