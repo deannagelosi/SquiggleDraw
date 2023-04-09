@@ -3,6 +3,7 @@
 from lib.Adafruit_Thermal import *
 import img.squiggle_seed234_384x259 as test_squiggle
 import psycopg2
+import json
 
 def print_image():
     printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
@@ -34,6 +35,35 @@ def main():
     # Create a cursor object to interact with the database
     cur = conn.cursor()
 
+    print("pre data: ")
+    read_data()
+    
+    json_test = {
+        "datetime": "997744",
+        "author": "Pangur"
+    }
+
+    insert_data(cur, json_test)
+
+    print("post data: ")
+    read_data()
+
+    # Close the cursor and the connection
+    cur.close()
+    conn.close()
+
+def insert_data(cur, json_data):
+    # Load JSON data
+    data = json.loads(json_data)
+
+    # Prepare the INSERT query template
+    query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
+
+    # Check if data is a list (multiple records) or a dict (single record)
+    for record in data:
+        cur.execute(query, (record['datetime'], record['author']))
+
+def read_data(cur):
     # Execute the SELECT query to fetch all rows from the 'squiggles' table
     cur.execute("SELECT * FROM squiggles;")
 
@@ -44,9 +74,6 @@ def main():
     for row in rows:
         print(row)
 
-    # Close the cursor and the connection
-    cur.close()
-    conn.close()
 
 if __name__ == "__main__":
     main()
