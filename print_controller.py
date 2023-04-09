@@ -36,7 +36,7 @@ def main():
     cur = conn.cursor()
 
     print("pre data: ")
-    read_data()
+    read_data(cur)
     
     json_test = {
         "datetime": "997744",
@@ -46,7 +46,7 @@ def main():
     insert_data(cur, json_test)
 
     print("post data: ")
-    read_data()
+    read_data(cur)
 
     # Close the cursor and the connection
     cur.close()
