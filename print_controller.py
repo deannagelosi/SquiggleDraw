@@ -2,10 +2,20 @@
 
 from lib.Adafruit_Thermal import *
 import img.squiggle_seed234_384x259 as test_squiggle
-import psycopg2
+# import psycopg2
 import json
 
-def print_image():
+# def print_image():
+#     printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
+
+#     printer.feed(1)
+#     # Print the test squiggle
+#     printer.printBitmap(test_squiggle.width, test_squiggle.height, test_squiggle.data)
+#     printer.feed(2)
+
+#     # printer.sleep()      # Tell printer to sleep
+
+def main():
     printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
 
     printer.feed(1)
@@ -13,69 +23,66 @@ def print_image():
     printer.printBitmap(test_squiggle.width, test_squiggle.height, test_squiggle.data)
     printer.feed(2)
 
-    # printer.sleep()      # Tell printer to sleep
+    # # Replace these with your actual database credentials
+    # db_name = "squiggle_db"
+    # db_user = "admin"
+    # db_password = "admin"
+    # db_host = "localhost"
+    # db_port = "5432"
 
-def main():
-    # Replace these with your actual database credentials
-    db_name = "squiggle_db"
-    db_user = "admin"
-    db_password = "admin"
-    db_host = "localhost"
-    db_port = "5432"
+    # # Connect to the database
+    # conn = psycopg2.connect(
+    #     dbname=db_name,
+    #     user=db_user,
+    #     password=db_password,
+    #     host=db_host,
+    #     port=db_port
+    # )
 
-    # Connect to the database
-    conn = psycopg2.connect(
-        dbname=db_name,
-        user=db_user,
-        password=db_password,
-        host=db_host,
-        port=db_port
-    )
+    # # Create a cursor object to interact with the database
+    # cur = conn.cursor()
 
-    # Create a cursor object to interact with the database
-    cur = conn.cursor()
-
-    print("pre data: ")
-    read_data(cur)
+    # print("pre data: ")
+    # read_data(cur)
     
-    json_test = [{
-        "datetime": "2023-04-09T14:30:00",
-        "author": "Pangur"
-    }]
+    # json_test = [{
+    #     "datetime": "2023-04-09T14:30:00",
+    #     "author": "Pangur"
+    # }]
 
-    insert_data(cur, json_test)
+    # insert_data(cur, json_test)
 
-    # Commit the transaction
-    conn.commit()
+    # # Commit the transaction
+    # conn.commit()
 
-    print("post data: ")
-    read_data(cur)
+    # print("post data: ")
+    # read_data(cur)
 
     # Close the cursor and the connection
-    cur.close()
-    conn.close()
+    # cur.close()
+    # conn.close()
 
-def insert_data(cur, json_data):
-    # Load JSON data
-    # data = json.loads(json_data)
+# def insert_data(cur, json_data):
+#     # Load JSON data
+#     # data = json.loads(json_data)
 
-    # Prepare the INSERT query template
-    query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
+#     # Prepare the INSERT query template
+#     query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
 
-    # Check if data is a list (multiple records) or a dict (single record)
-    for record in json_data:
-        cur.execute(query, (record['datetime'], record['author']))
+#     # Check if data is a list (multiple records) or a dict (single record)
+#     for record in json_data:
+#         cur.execute(query, (record['datetime'], record['author']))
 
-def read_data(cur):
-    # Execute the SELECT query to fetch all rows from the 'squiggles' table
-    cur.execute("SELECT * FROM squiggles;")
+# def read_data(cur):
+#     # Execute the SELECT query to fetch all rows from the 'squiggles' table
+#     cur.execute("SELECT * FROM squiggles;")
 
-    # Fetch all the rows returned by the query
-    rows = cur.fetchall()
+#     # Fetch all the rows returned by the query
+#     rows = cur.fetchall()
 
-    # Print the rows
-    for row in rows:
-        print(row)
+#     # Print the rows
+#     for row in rows:
+#         print(row)
 
 if __name__ == "__main__":
     main()
