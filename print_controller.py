@@ -45,6 +45,9 @@ def main():
 
     insert_data(cur, json_test)
 
+    # Commit the transaction
+    conn.commit()
+
     print("post data: ")
     read_data(cur)
 
@@ -73,7 +76,6 @@ def read_data(cur):
     # Print the rows
     for row in rows:
         print(row)
-
 
 if __name__ == "__main__":
     main()
