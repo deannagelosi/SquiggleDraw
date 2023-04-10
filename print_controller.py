@@ -1,6 +1,7 @@
 # source: https://github.com/adafruit/Python-Thermal-Printer/blob/master/printertest.py
 
 from lib.Adafruit_Thermal import *
+from datetime import datetime
 import img.squiggle_seed234_384x259 as test_squiggle
 import psycopg2
 import json
@@ -13,7 +14,14 @@ def main():
     rows = read_data(cursor)
 
     for row in rows:
-        print(type(row[0]))
+        datetime = row[0]
+
+        # Format the datetime object as a string
+        datetime_str = datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+        print(datetime_str)
+
+        # print(type(row[0]))
         # printer.print(row[])
 
     cursor.close()
