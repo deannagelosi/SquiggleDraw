@@ -10,7 +10,11 @@ def main():
     # print_image(printer)
     
     cursor, db = db_connect()
-    read_data(cursor)
+    rows = read_data(cursor)
+
+    for row in rows:
+        print(type(row[0]))
+        # printer.print(row[])
 
     cursor.close()
     db.close()
@@ -23,8 +27,10 @@ def read_data(cursor):
     rows = cursor.fetchall()
 
     # Print the rows
-    for row in rows:
-        print(row)
+    # for row in rows:
+        # print(row)
+    
+    return rows
 
 def db_connect():
     # Connect to the database
