@@ -19,8 +19,8 @@ def main():
             printer.feed(2)
             for row in rows:
                 # Format the datetime object as a string
-                datetime = row[0].strftime("%Y-%m-%d %H:%M:%S")
-                author = row[1]
+                datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
+                author = row[2]
 
                 # print(type(row[0]))
                 printer.print(datetime + ' ' + author)
@@ -30,6 +30,9 @@ def main():
             printer.feed(6)
             set_printed(cursor, rows)
 
+            # Commit the transaction
+            db.commit()
+
         cursor.close()
         db.close()
 
@@ -38,7 +41,7 @@ def main():
 
 def read_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_status of FALSE
-    cursor.execute("SELECT datetime, author FROM squiggles WHERE receipt_status = FALSE;")
+    cursor.execute("SELECT id, datetime, author FROM squiggles WHERE receipt_status = FALSE;")
 
     # Fetch all the rows returned by the query
     rows = cursor.fetchall()
@@ -47,12 +50,12 @@ def read_data(cursor):
 
 def set_printed(cursor, rows):
     # Prepare the UPDATE query template
-    query = "UPDATE squiggles SET receipt_status = TRUE WHERE datetime = %s AND author = %s;"
+    query = "UPDATE squiggles SET receipt_status = TRUE WHERE id = %s;"
 
     # Loop through the rows and update the receipt_status for each row
     for row in rows:
-        datetime, author = row
-        cursor.execute(query, (datetime, author))
+        id_key = row[0]
+        cursor.execute(query, (id_key))
 
 def db_connect():
     # Connect to the database
