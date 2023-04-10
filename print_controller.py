@@ -27,7 +27,7 @@ def main():
 
                 printer.feed(2)
 
-            printer.feed(6)
+            printer.feed(4)
             set_printed(cursor, rows)
 
             # Commit the transaction
@@ -55,7 +55,7 @@ def set_printed(cursor, rows):
     # Loop through the rows and update the receipt_status for each row
     for row in rows:
         id_key = row[0]
-        cursor.execute(query, (id_key))
+        cursor.execute(query, (id_key,))
 
 def db_connect():
     # Connect to the database
