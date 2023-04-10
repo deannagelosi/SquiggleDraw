@@ -2,7 +2,7 @@
 
 from lib.Adafruit_Thermal import *
 from datetime import datetime
-import img.squiggle_seed234_384x259 as test_squiggle
+# import img.squiggle_seed234_384x259 as test_squiggle
 import psycopg2
 import json
 
@@ -24,6 +24,7 @@ def main():
 
         printer.feed(2)
 
+    printer.feed(6)
     cursor.close()
     db.close()
 
