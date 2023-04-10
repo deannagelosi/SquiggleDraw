@@ -43,7 +43,7 @@ def main():
 
 def db_connect():
     # Connect to the database
-    conn = psycopg2.connect(
+    db = psycopg2.connect(
         dbname = "squiggle_db",
         user = "admin",
         password = "admin",
@@ -52,9 +52,9 @@ def db_connect():
     )
 
     # Create a cursor object to interact with the database
-    cursor = conn.cursor()
+    cursor = db.cursor()
 
-    return cursor, conn
+    return cursor, db
 
 def get_request(config):
     # makes AWS API request using key and url
@@ -73,17 +73,6 @@ def insert_data(cur, json_data):
     # Check if data is a list (multiple records) or a dict (single record)
     for record in json_data:
         cur.execute(query, (record['datetime'], record['author']))
-
-def read_data(cur):
-    # Execute the SELECT query to fetch all rows from the 'squiggles' table
-    cur.execute("SELECT * FROM squiggles;")
-
-    # Fetch all the rows returned by the query
-    rows = cur.fetchall()
-
-    # Print the rows
-    for row in rows:
-        print(row)
 
 if __name__ == '__main__':
     main()
