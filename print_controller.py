@@ -5,28 +5,36 @@ from datetime import datetime
 # import img.squiggle_seed234_384x259 as test_squiggle
 import psycopg2
 import json
+import time
 
 def main():
     printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
     # print_image(printer)
     
-    cursor, db = db_connect()
-    rows = read_data(cursor)
+    while True:
+        cursor, db = db_connect()
+        rows = read_data(cursor)
 
-    printer.feed(2)
-    for row in rows:
-        # Format the datetime object as a string
-        datetime = row[0].strftime("%Y-%m-%d %H:%M:%S")
-        author = row[1]
+        if rows:
+            printer.feed(2)
+            for row in rows:
+                # Format the datetime object as a string
+                datetime = row[0].strftime("%Y-%m-%d %H:%M:%S")
+                author = row[1]
 
-        # print(type(row[0]))
-        printer.print(datetime + ' ' + author)
+                # print(type(row[0]))
+                printer.print(datetime + ' ' + author)
 
-        printer.feed(2)
+                printer.feed(2)
 
-    printer.feed(6)
-    cursor.close()
-    db.close()
+            printer.feed(6)
+            set_printed(cursor, rows)
+
+        cursor.close()
+        db.close()
+
+        # Wait for 2 seconds before looping again
+        time.sleep(2)
 
 def read_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_status of FALSE
@@ -34,12 +42,17 @@ def read_data(cursor):
 
     # Fetch all the rows returned by the query
     rows = cursor.fetchall()
-
-    # Print the rows
-    # for row in rows:
-        # print(row)
     
     return rows
+
+def set_printed(cursor, rows):
+    # Prepare the UPDATE query template
+    query = "UPDATE squiggles SET receipt_status = TRUE WHERE datetime = %s AND author = %s;"
+
+    # Loop through the rows and update the receipt_status for each row
+    for row in rows:
+        datetime, author = row
+        cursor.execute(query, (datetime, author))
 
 def db_connect():
     # Connect to the database

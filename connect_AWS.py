@@ -1,45 +1,41 @@
 import requests
 import psycopg2
 import json
+import time
 
 def main():
     # Load API info
     with open('api_config.json', 'r') as file:
         config = json.load(file)
 
-    # make API request
-    response = get_request(config)
+    while True:
+        # make API request
+        response = get_request(config)
+        data = json.loads(response.json()["body"])
+        
+        if data:
+            # source: https://stackoverflow.com/questions/17915117/nested-dictionary-comprehension-python
+            result = [
+                {key: value for key, value in d.items() if key != "new_squiggle"}
+                for d in data
+            ]
+        else:
+            result = []
 
-    data = json.loads(response.json()["body"])
+        if result:
+            # Open connection to db
+            cursor, db = db_connect()
 
-    print(data)
-    
-    if data:
-        # source: https://stackoverflow.com/questions/17915117/nested-dictionary-comprehension-python
-        result = [
-            {key: value for key, value in d.items() if key != "new_squiggle"}
-            for d in data
-        ]
-    else:
-        result = []
+            insert_data(cursor, result)
 
-    print(result)
+            # Commit the transaction
+            db.commit()
 
-    # Open connection to db
-    cursor, db = db_connect()
+            cursor.close()
+            db.close()
 
-    # json_test = [{
-    #     "datetime": "2023-04-09T14:30:00",
-    #     "author": "Pangur"
-    # }]
-
-    insert_data(cursor, result)
-
-    # Commit the transaction
-    db.commit()
-
-    cursor.close()
-    db.close()
+        # Wait for 2 seconds before looping again
+        time.sleep(2)
 
 def db_connect():
     # Connect to the database
