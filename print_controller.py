@@ -13,16 +13,16 @@ def main():
     cursor, db = db_connect()
     rows = read_data(cursor)
 
+    printer.feed(2)
     for row in rows:
-        datetime = row[0]
-
         # Format the datetime object as a string
-        datetime_str = datetime.strftime("%Y-%m-%d %H:%M:%S")
-
-        print(datetime_str)
+        datetime = row[0].strftime("%Y-%m-%d %H:%M:%S")
+        author = row[1]
 
         # print(type(row[0]))
-        # printer.print(row[])
+        printer.print(datetime + ' ' + author)
+
+        printer.feed(2)
 
     cursor.close()
     db.close()
