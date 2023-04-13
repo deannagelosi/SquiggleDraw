@@ -30,13 +30,17 @@ form.addEventListener("submit", async function (event) {
 
     if (response.ok) {
         const jsonResponse = await response.json();
-        console.log("Success:", jsonResponse);
+        const responseBody = JSON.parse(jsonResponse.body);
+        console.log("Success:", responseBody.message);
+
         message.textContent = "Successfully submitted!";
         message.style.color = "green";
         form.reset();
     } else {
-        console.log("Error:");
-        console.log(response);
+        const jsonResponse = await response.json();
+        const responseBody = JSON.parse(jsonResponse.body);
+        console.log("Error:", responseBody.message);
+        
         message.textContent = "Error";
         message.style.color = "red";
     }
