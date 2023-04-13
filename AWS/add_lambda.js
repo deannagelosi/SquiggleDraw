@@ -16,6 +16,17 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 //  }
 
 export async function handler(event) {
+    const inviteKey = process.env.INVITEKEY;
+    const receivedInviteKey = event.inviteKey;
+    
+    if (receivedInviteKey != inviteKey) {
+        const response = {
+            statusCode: 401,
+            body: JSON.stringify({ message: "Invalid invite key." }),
+        };
+        return response; // script stops
+    }
+    
     // Check if event.squiggle is defined
     if (event.squiggle) {
         // Get the JSON data from the POST request
@@ -40,7 +51,7 @@ export async function handler(event) {
             // Create a response that returns the same POST body
             const response = {
                 statusCode: 200, // success
-                body: JSON.stringify({success: data}),
+                body: JSON.stringify({message: data}),
             };
             return response;
         } catch (error) {
