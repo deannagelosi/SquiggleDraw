@@ -7,12 +7,13 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 const client = new DynamoDBClient({});
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-// example request from Postman
+// example POST request
 // {
-//   "squiggle": {
-//       "datetime": "25345"
-//   }
-// }
+//     "squiggle": {
+//         "datetime": "2023-04-15T12:34:56",
+//         "author": "Deanna"
+//     }
+//  }
 
 export async function handler(event) {
     // Check if event.squiggle is defined
