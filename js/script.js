@@ -8,23 +8,29 @@ form.addEventListener("submit", function (event) {
     const author = document.getElementById("author").value;
     const datetime = new Date().toISOString();
 
-    const requestBody = {
+    const request = {
         inviteKey: inviteKeyParam,
         squiggle: {
             datetime,
             author,
         },
     };
+    const requestBody = JSON.stringify(request)
+
+    console.log("Request:");
+    console.log(requestBody);
 
     fetch("https://4ko9ppstm2.execute-api.us-west-2.amazonaws.com/prod/squiggle/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody),
+        body: requestBody,
     })
         .then((response) => {
             if (response.ok) {
+                console.log("Success:");
+                console.log(response);
                 message.textContent = "Successfully submitted!";
                 message.style.color = "green";
                 form.reset();
@@ -33,6 +39,8 @@ form.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => {
+            console.log("Error:");
+            console.log(error);
             message.textContent = "Error: " + error;
             message.style.color = "red";
         });
