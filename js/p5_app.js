@@ -1,5 +1,7 @@
-let slider1, slider2;
-let value1, value2;
+let lengthSlider, flourishSlider;
+let lengthValue, flourishValue;
+let lengthInput, flourishInput;
+let lengthLabel, flourishLabel;
 
 function setup() {
     const canvas = createCanvas(windowWidth, windowHeight - 100); // Adjust canvas height to exclude footer
@@ -9,30 +11,56 @@ function setup() {
 }
 
 function createFooter() {
-    slider1 = createSlider(0, 100, 50);
-    slider2 = createSlider(0, 100, 50);
+    lengthSlider = createSlider(0, 100, 50);
+    flourishSlider = createSlider(0, 100, 50);
 
-    slider1.input(updateValue1);
-    slider2.input(updateValue2);
+    // Create labels and input boxes for sliders
+    lengthLabel = createLabel('Length');
+    flourishLabel = createLabel('Flourish');
+    lengthInput = createInputBox(lengthSlider);
+    flourishInput = createInputBox(flourishSlider);
+
+    lengthSlider.input(updateLengthValue);
+    flourishSlider.input(updateFlourishValue);
 
     const footer = select('#footer');
-    const sliderContainer1 = createElement('div').addClass('slider-container');
-    const sliderContainer2 = createElement('div').addClass('slider-container');
+    const lengthSliderContainer = createElement('div').addClass('slider-container');
+    const flourishSliderContainer = createElement('div').addClass('slider-container');
 
-    sliderContainer1.child(slider1);
-    sliderContainer2.child(slider2);
-    footer.child(sliderContainer1);
-    footer.child(sliderContainer2);
+    lengthSliderContainer.child(lengthLabel);
+    lengthSliderContainer.child(lengthSlider);
+    lengthSliderContainer.child(lengthInput);
+    flourishSliderContainer.child(flourishLabel);
+    flourishSliderContainer.child(flourishSlider);
+    flourishSliderContainer.child(flourishInput);
+    footer.child(lengthSliderContainer);
+    footer.child(flourishSliderContainer);
 }
 
-function updateValue1() {
-    value1 = slider1.value();
-    // console.log(value1)
+function createLabel(name) {
+    const label = createElement('span', name);
+    label.style('margin-right', '10px');
+    return label;
 }
 
-function updateValue2() {
-    value2 = slider2.value();
-    // console.log(value2)
+function createInputBox(slider) {
+    const inputBox = createInput(slider.value().toString() + '%');
+    inputBox.style('margin-left', '10px');
+    inputBox.style('width', '60px');
+    inputBox.input(() => {
+        slider.value(parseInt(inputBox.value()));
+    });
+    return inputBox;
+}
+
+function updateLengthValue() {
+    lengthValue = lengthSlider.value();
+    lengthInput.value(lengthValue + '%');
+}
+
+function updateFlourishValue() {
+    flourishValue = flourishSlider.value();
+    flourishInput.value(flourishValue + '%');
 }
 
 function draw() {
@@ -43,6 +71,3 @@ function draw() {
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
-
-
-
