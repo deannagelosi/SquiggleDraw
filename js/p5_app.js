@@ -17,11 +17,15 @@ let reloadAmount;
 let seed;
 let showField;
 let squigglePoints;
+let offScreenRenderer;
+let svgData;
 
 function setup() {
     // UI setup
     const canvas = createCanvas(windowWidth, windowHeight - 100); // Adjust canvas height to exclude footer
     canvas.parent('canvas-container');
+    // Create an off-screen renderer for the SVG output
+    offScreenRenderer = createGraphics(width, height, SVG);
 
     createFooter();
 
@@ -48,7 +52,11 @@ function draw() {
     // background(220);
 
     squigglePoints = generateSquigglePoints();
-    drawSquiggle(squigglePoints);
+    drawSquiggle(squigglePoints, this);
+    drawSquiggle(squigglePoints, offScreenRenderer);
+      // Get the SVG data as a string
+    svgData = offScreenRenderer.elt.svg.outerHTML;
+    console.log(svgData);
 
     noLoop();
 }
@@ -189,23 +197,23 @@ function checkBounds(px, py) {
     return !(px >= width - buffer || px <= buffer || py >= height - buffer || py <= buffer);
 }
 
-function drawSquiggle(points) {
-    background(255);
+function drawSquiggle(points, renderer) {
+    renderer.background(255);
 
     if (showField) {
         showPerlinField();
     }
 
-    noFill();
-    stroke(0, 0, 0);
-    strokeWeight(2);
+    renderer.noFill();
+    renderer.stroke(0, 0, 0);
+    renderer.strokeWeight(2);
 
-    beginShape();
-    curveVertex(points[0].x, points[0].y);
+    renderer.beginShape();
+    renderer.curveVertex(points[0].x, points[0].y);
     for (let i = 0; i < points.length; i++) {
-        curveVertex(points[i].x, points[i].y);
+        renderer.curveVertex(points[i].x, points[i].y);
     }
-    endShape();
+    renderer.endShape();
 }
 
 function showPerlinField() {
