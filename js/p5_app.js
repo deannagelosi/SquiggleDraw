@@ -54,7 +54,7 @@ function draw() {
     squigglePoints = generateSquigglePoints();
     drawSquiggle(squigglePoints, this);
     drawSquiggle(squigglePoints, offScreenRenderer);
-      // Get the SVG data as a string
+    // Get the SVG data as a string
     svgData = offScreenRenderer.elt.svg.outerHTML;
     // console.log(svgData);
 
@@ -87,6 +87,16 @@ function createFooter() {
     flourishSliderContainer.child(flourishInput);
     footer.child(lengthSliderContainer);
     footer.child(flourishSliderContainer);
+
+    // Create and center the "Send" button
+    const buttonContainer = createElement('div').addClass('button-container');
+    const sendButton = createButton('Send');
+    sendButton.mouseClicked(() => {
+        sendData();
+    });
+
+    buttonContainer.child(sendButton);
+    footer.child(buttonContainer);
 }
 
 function createLabel(name) {
@@ -262,20 +272,22 @@ class Point {
 
 // API stuff
 
-// const urlParams = new URLSearchParams(window.location.search);
-// const inviteKeyParam = urlParams.get("inviteKey");
+
 // const form = document.getElementById("squiggle-form");
 // const message = document.getElementById("message");
 
 // form.addEventListener("submit", async function (event) {
-async function sendData(inviteKey) {
+async function sendData() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const inviteKeyParam = urlParams.get("inviteKey");
     // event.preventDefault();
     // const author = document.getElementById("author").value;
     const author = "Deanna";
     const datetime = new Date().toISOString();
 
     const request = {
-        inviteKey: inviteKey,// inviteKeyParam,
+        inviteKey: inviteKeyParam,
         squiggle: {
             datetime,
             author,
@@ -307,7 +319,7 @@ async function sendData(inviteKey) {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log("Error:", responseBody.message);
-        
+
         // message.textContent = "Error";
         // message.style.color = "red";
     }
