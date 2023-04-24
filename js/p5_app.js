@@ -358,9 +358,10 @@ async function sendData() {
     });
 
     if (response.ok) {
+        console.log(response);
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
-        console.log("Success:", responseBody.message);
+        console.log("Response:", responseBody); //.message
 
         // message.textContent = "Successfully submitted!";
         // message.style.color = "green";
@@ -368,7 +369,7 @@ async function sendData() {
     } else {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
-        console.log("Error:", responseBody.message);
+        console.log("Error:", responseBody); //.message
 
         // message.textContent = "Error";
         // message.style.color = "red";
