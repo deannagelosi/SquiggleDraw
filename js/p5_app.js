@@ -337,11 +337,11 @@ async function sendData() {
             datetime: new Date().toLocaleString(),
             author: author,
             svgData: svgData,
-            squiggleParams: {
+            squiggleParams: JSON.stringify({
                 title: title,
                 length: length.selected,
                 turn: turn.selected
-            }
+            })
         },
     };
     const requestBody = JSON.stringify(request)
@@ -361,7 +361,7 @@ async function sendData() {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log(jsonResponse.body)
-        console.log("Response:", responseBody); //.message
+        // console.log("Response:", responseBody.message);
 
         // message.textContent = "Successfully submitted!";
         // message.style.color = "green";
@@ -370,7 +370,7 @@ async function sendData() {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log(jsonResponse.body)
-        console.log("Error:", responseBody); //.message
+        // console.log("Error:", responseBody.message);
 
         // message.textContent = "Error";
         // message.style.color = "red";
