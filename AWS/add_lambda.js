@@ -11,7 +11,9 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 // {
 //     "squiggle": {
 //         "datetime": "2023-04-15T12:34:56",
-//         "author": "Deanna"
+//         "author": "Deanna",
+//         "svgData": "<svg info>"
+//         "squiggleParams": "{json}"
 //     }
 //  }
 
@@ -39,7 +41,9 @@ export async function handler(event) {
             Item: {
                 "datetime": data.datetime,
                 "new_squiggle": 1,
-                "author": data.author
+                "author": data.author,
+                "svg_data": data.svgData,
+                "squiggle_params": data.squiggleParams
                 // Add more attributes as needed
             }
         };
@@ -60,6 +64,7 @@ export async function handler(event) {
                 statusCode: 500, // server error
                 body: JSON.stringify({ 
                     message: 'An error occurred while adding the item to the DynamoDB table.',
+                    received: data,
                     error: error
                 }),
             };
@@ -69,11 +74,10 @@ export async function handler(event) {
         // Return an error response if event.squiggle is undefined
         const response = {
             statusCode: 400, // user error
-            body: JSON.stringify(
-                { 
-                    message: 'Invalid event.',
-                    event: event
-                }),
+            body: JSON.stringify({ 
+                message: 'Invalid event.',
+                event: event
+            }),
         };
         return response;
     }
