@@ -338,8 +338,8 @@ async function sendData() {
         squiggle: {
             datetime: datetime, // new Date().toLocaleString(),
             author: author,
-            svgData: svgData,
-            squiggleParams: "test"
+            svgData: svgData //,
+            // squiggleParams: "test"
             
             // JSON.stringify({
             //     title: title,
