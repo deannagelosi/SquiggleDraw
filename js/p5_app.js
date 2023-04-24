@@ -27,7 +27,7 @@
 // length = pixel distance
 let length = {
     min: 500,
-    max: 3000,
+    max: 4000,
     selected: null
 };
 
@@ -113,7 +113,7 @@ function generateSquigglePoints() {
         
         // Loop until squiggle hits the user specified length
         squiggleLength = 0;
-        while (squiggleLength < length.selected) {
+        while (squiggleLength < length.max) {
             let pNoise = noise(px / scale, py / scale);
             let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
             let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
@@ -144,7 +144,9 @@ function generateSquigglePoints() {
             }
 
             if (checkBounds(px, py)) {
-                pointsArray.push(new Point(px, py));
+                if (squiggleLength < length.selected) {
+                    pointsArray.push(new Point(px, py));
+                }
                 squiggleLength += distance;
             } else {
                 break;
@@ -153,7 +155,7 @@ function generateSquigglePoints() {
 
         // check if squiggle is worth keeping
         let percentBig = numBigTurns / (numBigTurns + numSmallTurns);
-        if (percentBig > bigThreshold || squiggleLength < length.selected - 100) {
+        if (percentBig > bigThreshold || squiggleLength < (length.max - pointDistance.max)) {
             goodArt = false;
             seed++;
         } else {
@@ -212,13 +214,13 @@ function remap(value, oldMin, oldMax, newMin, newMax) {
 // Interaction functions
 
 // Detect user touching screen
-function touchStarted() {
-    // check if the touch happened inside the canvas area
-    if (touches.length > 0 && touches[0].y < height) {
-        seed++;
-        loop();
-    }
-}
+// function touchStarted() {
+//     // check if the touch happened inside the canvas area
+//     if (touches.length > 0 && touches[0].y < height) {
+//         seed++;
+//         loop();
+//     }
+// }
 
 // function keyPressed() {
 //     if (key === 's') {
@@ -287,7 +289,7 @@ function createLabel(name) {
 }
 
 function createInputBox(slider) {
-    const inputBox = createInput(slider.value().toString() + '%');
+    const inputBox = createInput(slider.value().toString());
     inputBox.style('margin-left', '10px');
     inputBox.style('width', '60px');
     inputBox.input(() => {
@@ -297,17 +299,19 @@ function createInputBox(slider) {
 }
 
 function updateLengthValue() {
-    currentLength = lengthSlider.value();
-    lengthInput.value(currentLength + '%');
-    // length.selected = currentLength;
+    lengthFactor = lengthSlider.value();
+    lengthInput.value(lengthFactor);
 
-    // seed = 1;
-    // loop();
+    let newLength = remap(lengthFactor, 0, 100, length.min, length.max)
+    // console.log(newLength)
+
+    length.selected = newLength;
+    loop();
 }
 
 function updateTurnValue() {
     currentTurn = turnSlider.value();
-    turnInput.value(currentTurn + '%');
+    turnInput.value(currentTurn);
 
     // translate slider value to max turn value and redraw
     let piMod = remap(currentTurn, 0, 100, turn.min, turn.max);
