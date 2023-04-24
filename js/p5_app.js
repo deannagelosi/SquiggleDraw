@@ -1,24 +1,63 @@
-// UI vars
-let lengthSlider, flourishSlider;
-let lengthValue, flourishValue;
-let lengthInput, flourishInput;
-let lengthLabel, flourishLabel;
+// Squiggle Generator
+// "Take a Dot for a Walk"
+// source: converted from https://github.com/deannagelosi/squiggle_generator
+
+// todo: 
+// - add button to createFooter (see chat)
+// - use code in js/script.js to add sending svgData to POST
+// - add handling the svgData field to aws and pi db
+// - print the svg on the thermal printer
+// - canvas size (padding/boarder?)
+// - when saving svg, send to POST endpoint
+// - add button to save svg
+// - seed: reset seed back to 1 anytime parameters change
+// - knobs for parameters 
+//   - length: combination of steps and distance
+//   - turn: maxTurn value
+// - HTML sliders
+// - UI for parameters
+// - author and project title
+// - seed, length, turn
+// - randomize parameters and button
+// - axidraw scales the svg to fit (width and height) before drawing
+// - dont let user type a value into the input box that exceed/is less than the slider range
+
+
+// parameters
+// length = pixel distance
+let length = {
+    min: 500,
+    max: 3000,
+    selected: null
+};
+
+// Max turn speed: 0.25 = circles, 0.5 = squares, 0.875 = starbursts
+let turn = {
+    min: 0.25,
+    max: 0.875,
+    selected: null
+};
+
+// Distance between points
+let pointDistance = { min: 20, max: 100 }
 
 // squiggle vars
-let maxTurn;
 let scale;
 let bigThreshold;
-let minSteps, maxSteps;
-let minDistance, maxDistance;
-let minLength, maxLength;
+let squiggleLength;
 let centerX, centerY;
 let buffer;
-let reloadAmount;
 let seed;
 let showField;
 let squigglePoints;
 let offScreenRenderer;
 let svgData;
+let author;
+let title;
+
+// UI vars
+let lengthSlider, turnSlider;
+let lengthInput, turnInput;
 
 function setup() {
     // UI setup
@@ -29,20 +68,14 @@ function setup() {
 
     createFooter();
 
+    turn.selected = piValue((turn.min + turn.max) / 2);
+    length.selected = (length.min + length.max) / 2;
+    
     // squiggle setup
     centerX = width / 2;
     centerY = height / 2;
-
-    reloadAmount = 3;
-    minSteps = 20; // steps are number of points
-    maxSteps = 80;
-    minDistance = 20; // distance between points
-    maxDistance = 100;
-    minLength = 1500;
-    maxLength = 3000;
     buffer = 35; // boarder margin in pixels
     scale = 100.0; // zoom level on Perlin noise field
-    maxTurn = QUARTER_PI + PI / 8; // Max turn speed (QUARTER_PI = circles, HALF_PI = squares, PI = starbursts)
     bigThreshold = 0.80; // Higher percent, more loops
     seed = 1; // increment on each attempt
     showField = false;
@@ -61,32 +94,39 @@ function draw() {
     noLoop();
 }
 
+function piValue(turnMod) {
+    return (turnMod * PI) + (PI / 8)
+}
+
 // UI functions
 function createFooter() {
+    // Create sliders
     lengthSlider = createSlider(0, 100, 50);
-    flourishSlider = createSlider(0, 100, 50);
-
-    // Create labels and input boxes for sliders
-    lengthLabel = createLabel('Length');
-    flourishLabel = createLabel('Flourish');
-    lengthInput = createInputBox(lengthSlider);
-    flourishInput = createInputBox(flourishSlider);
-
+    turnSlider = createSlider(0, 100, 50);
+    // Set value change handlers
     lengthSlider.input(updateLengthValue);
-    flourishSlider.input(updateFlourishValue);
+    turnSlider.input(updateTurnValue);
 
-    const footer = select('#footer');
+    // Create input boxes
+    lengthInput = createInputBox(lengthSlider);
+    turnInput = createInputBox(turnSlider);
+
+    // Build the length controls
     const lengthSliderContainer = createElement('div').addClass('slider-container');
-    const flourishSliderContainer = createElement('div').addClass('slider-container');
-
-    lengthSliderContainer.child(lengthLabel);
+    lengthSliderContainer.child(createLabel('Length'));
     lengthSliderContainer.child(lengthSlider);
     lengthSliderContainer.child(lengthInput);
-    flourishSliderContainer.child(flourishLabel);
-    flourishSliderContainer.child(flourishSlider);
-    flourishSliderContainer.child(flourishInput);
+    
+    // Build the turn controls
+    const turnSliderContainer = createElement('div').addClass('slider-container');
+    turnSliderContainer.child(createLabel('Turn'));
+    turnSliderContainer.child(turnSlider);
+    turnSliderContainer.child(turnInput);
+
+    // Add UI controls to the footer
+    const footer = select('#footer');
     footer.child(lengthSliderContainer);
-    footer.child(flourishSliderContainer);
+    footer.child(turnSliderContainer);
 
     // Create and center the "Send" button
     const buttonContainer = createElement('div').addClass('button-container');
@@ -116,17 +156,21 @@ function createInputBox(slider) {
 }
 
 function updateLengthValue() {
-    lengthValue = lengthSlider.value();
-    lengthInput.value(lengthValue + '%');
+    currentLength = lengthSlider.value();
+    lengthInput.value(currentLength + '%');
+    // length.selected = currentLength;
+
+    // seed = 1;
+    // loop();
 }
 
-function updateFlourishValue() {
-    flourishValue = flourishSlider.value();
-    flourishInput.value(flourishValue + '%');
+function updateTurnValue() {
+    currentTurn = turnSlider.value();
+    turnInput.value(currentTurn + '%');
 
-    // translate slider value to maxTurn and redraw
-    let piMod = remap(flourishValue, 0, 100, 0.25, 0.875)
-    maxTurn = (piMod * PI) + (PI / 8);
+    // translate slider value to max turn value and redraw
+    let piMod = remap(currentTurn, 0, 100, turn.min, turn.max)
+    turn.selected = piValue(piMod)
 
     seed = 1;
     loop();
@@ -138,10 +182,8 @@ function windowResized() {
 
 // squiggle functions
 function generateSquigglePoints() {
-    let pointsArray = [];
 
     let goodArt = false;
-
     while (!goodArt) {
         noiseSeed(seed);
         pointsArray = [];
@@ -150,17 +192,18 @@ function generateSquigglePoints() {
         let py = centerY;
         let angle = HALF_PI;
 
-        let squiggleLength = 0;
         let numBigTurns = 0;
         let numSmallTurns = 0;
-
-        for (let i = 0; i < maxSteps; i++) {
+        
+        // Loop until squiggle hits the user specified length
+        squiggleLength = 0;
+        while (squiggleLength < length.selected) {
             let pNoise = noise(px / scale, py / scale);
             let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
-            let distance = map(pNoise, 0, 1, minDistance, maxDistance);
+            let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
 
-            if (abs(deltaAngle) > maxTurn) {
-                angle += maxTurn;
+            if (abs(deltaAngle) > turn.selected) {
+                angle += turn.selected;
                 numBigTurns++;
             } else {
                 angle += deltaAngle;
@@ -170,6 +213,7 @@ function generateSquigglePoints() {
             px += distance * cos(angle);
             py += distance * sin(angle);
 
+            // Check if out of bounds. If so, try to get back in bounds
             for (let k = 0; k < 50; k++) {
                 if (checkBounds(px, py)) {
                     break;
@@ -191,8 +235,9 @@ function generateSquigglePoints() {
             }
         }
 
+        // check if squiggle is worth keeping
         let percentBig = numBigTurns / (numBigTurns + numSmallTurns);
-        if (percentBig > bigThreshold || squiggleLength < minLength || squiggleLength > maxLength) {
+        if (percentBig > bigThreshold || squiggleLength < length.selected - 100) {
             goodArt = false;
             seed++;
         } else {
@@ -283,15 +328,18 @@ async function sendData() {
     const inviteKeyParam = urlParams.get("inviteKey");
     // event.preventDefault();
     // const author = document.getElementById("author").value;
-    const author = "Deanna";
-    const datetime = new Date().toISOString();
 
     const request = {
         inviteKey: inviteKeyParam,
         squiggle: {
-            datetime,
-            author,
-            svgData,
+            datetime: new Date().toLocaleString(),
+            author: author,
+            svgData: svgData,
+            squiggleParams: {
+                title: title,
+                length: length.selected,
+                turn: turn.selected
+            }
         },
     };
     const requestBody = JSON.stringify(request)
