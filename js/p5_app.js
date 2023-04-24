@@ -68,8 +68,10 @@ function setup() {
 
     createFooter();
 
-    turn.selected = piValue((turn.min + turn.max) / 2);
+    turn.selected = (turn.min + turn.max) / 2;
     length.selected = (length.min + length.max) / 2;
+    author = "";
+    title = "";
     
     // squiggle setup
     centerX = width / 2;
@@ -169,8 +171,8 @@ function updateTurnValue() {
     turnInput.value(currentTurn + '%');
 
     // translate slider value to max turn value and redraw
-    let piMod = remap(currentTurn, 0, 100, turn.min, turn.max)
-    turn.selected = piValue(piMod)
+    let piMod = remap(currentTurn, 0, 100, turn.min, turn.max);
+    turn.selected = piMod;
 
     seed = 1;
     loop();
@@ -202,8 +204,8 @@ function generateSquigglePoints() {
             let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
             let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
 
-            if (abs(deltaAngle) > turn.selected) {
-                angle += turn.selected;
+            if (abs(deltaAngle) > piValue(turn.selected)) {
+                angle += piValue(turn.selected);
                 numBigTurns++;
             } else {
                 angle += deltaAngle;
