@@ -358,9 +358,9 @@ async function sendData() {
     });
 
     if (response.ok) {
-        console.log(response);
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
+        console.log(jsonResponse.body)
         console.log("Response:", responseBody); //.message
 
         // message.textContent = "Successfully submitted!";
@@ -369,6 +369,7 @@ async function sendData() {
     } else {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
+        console.log(jsonResponse.body)
         console.log("Error:", responseBody); //.message
 
         // message.textContent = "Error";
