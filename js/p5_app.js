@@ -70,8 +70,8 @@ function setup() {
 
     turn.selected = (turn.min + turn.max) / 2;
     length.selected = (length.min + length.max) / 2;
-    author = "";
-    title = "";
+    author = "Unknown";
+    title = "Untitled";
     
     // squiggle setup
     centerX = width / 2;
