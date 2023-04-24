@@ -23,23 +23,13 @@
 // - dont let user type a value into the input box that exceed/is less than the slider range
 
 
-// parameters
+// User Parameters
 // length = pixel distance
-let length = {
-    min: 500,
-    max: 4000,
-    selected: null
-};
-
+let length = { min: 500, max: 3500, selected: null };
 // Max turn speed: 0.25 = circles, 0.5 = squares, 0.875 = starbursts
-let turn = {
-    min: 0.25,
-    max: 0.875,
-    selected: null
-};
-
-// Distance between points
-let pointDistance = { min: 20, max: 100 }
+let turnRadius = { min: 0.25, max: 0.875, selected: null };
+// Range of distance between points
+let pDistance = { min: [10, 50], max: [20, 200], selected: [null, null] };
 
 // squiggle vars
 let scale;
@@ -56,23 +46,26 @@ let author;
 let title;
 
 // UI vars
-let lengthSlider, turnSlider;
-let lengthInput, turnInput;
+let lengthSlider, lengthInput;
+let turnSlider, turnInput;
+let compressSlider, compressInput;
 
 function setup() {
     // UI setup
-    const canvas = createCanvas(windowWidth, windowHeight - 100); // Adjust canvas height to exclude footer
+    const canvas = createCanvas(windowWidth, windowHeight - 200); // Adjust canvas height to exclude footer
     canvas.parent('canvas-container');
     // Create an off-screen renderer for the SVG output
     offScreenRenderer = createGraphics(width, height, SVG);
 
     createFooter();
 
-    turn.selected = (turn.min + turn.max) / 2;
+    turnRadius.selected = (turnRadius.min + turnRadius.max) / 2;
     length.selected = (length.min + length.max) / 2;
+    pDistance.selected = [(pDistance.min[0] + pDistance.max[0]) / 2, (pDistance.min[1] + pDistance.max[1]) / 2];
+
     author = "Unknown";
     title = "Untitled";
-    
+
     // squiggle setup
     centerX = width / 2;
     centerY = height / 2;
@@ -110,16 +103,16 @@ function generateSquigglePoints() {
 
         let numBigTurns = 0;
         let numSmallTurns = 0;
-        
+
         // Loop until squiggle hits the user specified length
         squiggleLength = 0;
         while (squiggleLength < length.max) {
             let pNoise = noise(px / scale, py / scale);
             let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
-            let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
+            let distance = map(pNoise, 0, 1, pDistance.selected[0], pDistance.selected[1]);
 
-            if (abs(deltaAngle) > piValue(turn.selected)) {
-                angle += piValue(turn.selected);
+            if (abs(deltaAngle) > piValue(turnRadius.selected)) {
+                angle += piValue(turnRadius.selected);
                 numBigTurns++;
             } else {
                 angle += deltaAngle;
@@ -155,7 +148,7 @@ function generateSquigglePoints() {
 
         // check if squiggle is worth keeping
         let percentBig = numBigTurns / (numBigTurns + numSmallTurns);
-        if (percentBig > bigThreshold || squiggleLength < (length.max - pointDistance.max)) {
+        if (percentBig > bigThreshold || squiggleLength < (length.max - (pDistance.selected[1]))) {
             goodArt = false;
             seed++;
         } else {
@@ -211,28 +204,6 @@ function remap(value, oldMin, oldMax, newMin, newMax) {
     return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
 }
 
-// Interaction functions
-
-// Detect user touching screen
-// function touchStarted() {
-//     // check if the touch happened inside the canvas area
-//     if (touches.length > 0 && touches[0].y < height) {
-//         seed++;
-//         loop();
-//     }
-// }
-
-// function keyPressed() {
-//     if (key === 's') {
-//         let filename = "generated/squiggle-seed" + seed + ".svg";
-//         // Save the canvas as an SVG file
-//         saveCanvas(filename, 'svg');
-//     } else if (key === 'f') {
-//         showField = !showField;
-//         loop();
-//     }
-// }
-
 // Custom squiggle Point class
 class Point {
     constructor(x, y) {
@@ -246,30 +217,40 @@ function createFooter() {
     // Create sliders
     lengthSlider = createSlider(0, 100, 50);
     turnSlider = createSlider(0, 100, 50);
+    compressSlider = createSlider(0, 100, 50);
     // Set value change handlers
     lengthSlider.input(updateLengthValue);
     turnSlider.input(updateTurnValue);
+    compressSlider.input(updateCompressValue);
 
     // Create input boxes
     lengthInput = createInputBox(lengthSlider);
     turnInput = createInputBox(turnSlider);
+    compressInput = createInputBox(compressSlider);
 
     // Build the length controls
-    const lengthSliderContainer = createElement('div').addClass('slider-container');
-    lengthSliderContainer.child(createLabel('Length'));
-    lengthSliderContainer.child(lengthSlider);
-    lengthSliderContainer.child(lengthInput);
-    
+    const lengthUIContainer = createElement('div').addClass('slider-container');
+    lengthUIContainer.child(createLabel('Length'));
+    lengthUIContainer.child(lengthSlider);
+    lengthUIContainer.child(lengthInput);
+
     // Build the turn controls
-    const turnSliderContainer = createElement('div').addClass('slider-container');
-    turnSliderContainer.child(createLabel('Turn'));
-    turnSliderContainer.child(turnSlider);
-    turnSliderContainer.child(turnInput);
+    const turnUIContainer = createElement('div').addClass('slider-container');
+    turnUIContainer.child(createLabel('Turn Radius'));
+    turnUIContainer.child(turnSlider);
+    turnUIContainer.child(turnInput);
+
+    // Build the compress controls
+    const compressUIContainer = createElement('div').addClass('slider-container');
+    compressUIContainer.child(createLabel('Compression'));
+    compressUIContainer.child(compressSlider);
+    compressUIContainer.child(compressInput);
 
     // Add UI controls to the footer
     const footer = select('#footer');
-    footer.child(lengthSliderContainer);
-    footer.child(turnSliderContainer);
+    footer.child(lengthUIContainer);
+    footer.child(turnUIContainer);
+    footer.child(compressUIContainer);
 
     // Create and center the "Send" button
     const buttonContainer = createElement('div').addClass('button-container');
@@ -303,9 +284,9 @@ function updateLengthValue() {
     lengthInput.value(lengthFactor);
 
     let newLength = remap(lengthFactor, 0, 100, length.min, length.max)
-    // console.log(newLength)
-
     length.selected = newLength;
+
+    // Draw squiggle with new length
     loop();
 }
 
@@ -314,9 +295,24 @@ function updateTurnValue() {
     turnInput.value(currentTurn);
 
     // translate slider value to max turn value and redraw
-    let piMod = remap(currentTurn, 0, 100, turn.min, turn.max);
-    turn.selected = piMod;
+    let piMod = remap(currentTurn, 0, 100, turnRadius.min, turnRadius.max);
+    turnRadius.selected = piMod;
 
+    // Reset to the start and search for squiggle
+    seed = 1;
+    loop();
+}
+
+function updateCompressValue() {
+    currentCompress = compressSlider.value();
+    compressInput.value(currentCompress);
+
+    let newMin = remap(currentCompress, 0, 100, pDistance.min[0], pDistance.max[0]);
+    let newMax = remap(currentCompress, 0, 100, pDistance.min[1], pDistance.max[1]);
+    let newRange = [newMin, newMax];
+    pDistance.selected = newRange;
+
+    // Reset to the start and search for squiggle
     seed = 1;
     loop();
 }
@@ -341,7 +337,8 @@ async function sendData() {
             squiggleParams: JSON.stringify({
                 title: title,
                 length: length.selected,
-                turn: turn.selected
+                turn: turnRadius.selected,
+                pDistance: pDistance.selected
             })
         },
     };
@@ -362,7 +359,6 @@ async function sendData() {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log("Response:", responseBody.message);
-        console.log(responseBody)
 
         // message.textContent = "Successfully submitted!";
         // message.style.color = "green";
@@ -371,7 +367,6 @@ async function sendData() {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log("Error:", responseBody.message);
-        console.log(responseBody)
 
         // message.textContent = "Error";
         // message.style.color = "red";
