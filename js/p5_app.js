@@ -328,24 +328,19 @@ async function sendData() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const inviteKeyParam = urlParams.get("inviteKey");
-    // event.preventDefault();
     // const author = document.getElementById("author").value;
-
-    const datetime = new Date().toISOString();
 
     const request = {
         inviteKey: inviteKeyParam,
         squiggle: {
-            datetime: datetime, // new Date().toLocaleString(),
+            datetime: new Date().toLocaleString(),
             author: author,
-            svgData: svgData //,
-            // squiggleParams: "test"
-            
-            // JSON.stringify({
-            //     title: title,
-            //     length: length.selected,
-            //     turn: turn.selected
-            // })
+            svgData: svgData,
+            squiggleParams: JSON.stringify({
+                title: title,
+                length: length.selected,
+                turn: turn.selected
+            })
         },
     };
     const requestBody = JSON.stringify(request)
