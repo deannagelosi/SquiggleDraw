@@ -96,8 +96,147 @@ function draw() {
     noLoop();
 }
 
+// squiggle functions
+function generateSquigglePoints() {
+
+    let goodArt = false;
+    while (!goodArt) {
+        noiseSeed(seed);
+        pointsArray = [];
+
+        let px = centerX;
+        let py = centerY;
+        let angle = HALF_PI;
+
+        let numBigTurns = 0;
+        let numSmallTurns = 0;
+        
+        // Loop until squiggle hits the user specified length
+        squiggleLength = 0;
+        while (squiggleLength < length.selected) {
+            let pNoise = noise(px / scale, py / scale);
+            let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
+            let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
+
+            if (abs(deltaAngle) > piValue(turn.selected)) {
+                angle += piValue(turn.selected);
+                numBigTurns++;
+            } else {
+                angle += deltaAngle;
+                numSmallTurns++;
+            }
+
+            px += distance * cos(angle);
+            py += distance * sin(angle);
+
+            // Check if out of bounds. If so, try to get back in bounds
+            for (let k = 0; k < 50; k++) {
+                if (checkBounds(px, py)) {
+                    break;
+                } else {
+                    let newNoise = noise((px + (k * 10)) / scale, py / scale);
+                    let nudgeAngle = map(newNoise, 0, 1, PI / 32, PI);
+                    angle = -1 * angle + nudgeAngle;
+
+                    px += distance * cos(angle);
+                    py += distance * sin(angle);
+                }
+            }
+
+            if (checkBounds(px, py)) {
+                pointsArray.push(new Point(px, py));
+                squiggleLength += distance;
+            } else {
+                break;
+            }
+        }
+
+        // check if squiggle is worth keeping
+        let percentBig = numBigTurns / (numBigTurns + numSmallTurns);
+        if (percentBig > bigThreshold || squiggleLength < length.selected - 100) {
+            goodArt = false;
+            seed++;
+        } else {
+            goodArt = true;
+        }
+    }
+
+    return pointsArray;
+}
+
+function drawSquiggle(points, renderer) {
+    renderer.background(255);
+
+    if (showField) {
+        showPerlinField();
+    }
+
+    renderer.noFill();
+    renderer.stroke(0, 0, 0);
+    renderer.strokeWeight(2);
+
+    renderer.beginShape();
+    renderer.curveVertex(points[0].x, points[0].y);
+    for (let i = 0; i < points.length; i++) {
+        renderer.curveVertex(points[i].x, points[i].y);
+    }
+    renderer.endShape();
+}
+
+// Helper functions
+function showPerlinField() {
+    noStroke();
+
+    for (let y = 0; y < height; y += 5) {
+        for (let x = 0; x < width; x += 5) {
+            let nShading = noise(x / scale, y / scale);
+            let shading = map(nShading, 0, 1, 75, 255);
+            fill(shading);
+            rect(x, y, 5, 5);
+        }
+    }
+}
+
+function checkBounds(px, py) {
+    return !(px >= width - buffer || px <= buffer || py >= height - buffer || py <= buffer);
+}
+
 function piValue(turnMod) {
     return (turnMod * PI) + (PI / 8)
+}
+
+function remap(value, oldMin, oldMax, newMin, newMax) {
+    return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+}
+
+// Interaction functions
+
+// Detect user touching screen
+function touchStarted() {
+    // check if the touch happened inside the canvas area
+    if (touches.length > 0 && touches[0].y < height) {
+        seed++;
+        loop();
+    }
+}
+
+// function keyPressed() {
+//     if (key === 's') {
+//         let filename = "generated/squiggle-seed" + seed + ".svg";
+//         // Save the canvas as an SVG file
+//         saveCanvas(filename, 'svg');
+//     } else if (key === 'f') {
+//         showField = !showField;
+//         loop();
+//     }
+// }
+
+// Custom squiggle Point class
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 }
 
 // UI functions
@@ -182,148 +321,7 @@ function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 
-// squiggle functions
-function generateSquigglePoints() {
-
-    let goodArt = false;
-    while (!goodArt) {
-        noiseSeed(seed);
-        pointsArray = [];
-
-        let px = centerX;
-        let py = centerY;
-        let angle = HALF_PI;
-
-        let numBigTurns = 0;
-        let numSmallTurns = 0;
-        
-        // Loop until squiggle hits the user specified length
-        squiggleLength = 0;
-        while (squiggleLength < length.selected) {
-            let pNoise = noise(px / scale, py / scale);
-            let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
-            let distance = map(pNoise, 0, 1, pointDistance.min, pointDistance.max);
-
-            if (abs(deltaAngle) > piValue(turn.selected)) {
-                angle += piValue(turn.selected);
-                numBigTurns++;
-            } else {
-                angle += deltaAngle;
-                numSmallTurns++;
-            }
-
-            px += distance * cos(angle);
-            py += distance * sin(angle);
-
-            // Check if out of bounds. If so, try to get back in bounds
-            for (let k = 0; k < 50; k++) {
-                if (checkBounds(px, py)) {
-                    break;
-                } else {
-                    let newNoise = noise((px + (k * 10)) / scale, py / scale);
-                    let nudgeAngle = map(newNoise, 0, 1, PI / 32, PI);
-                    angle = -1 * angle + nudgeAngle;
-
-                    px += distance * cos(angle);
-                    py += distance * sin(angle);
-                }
-            }
-
-            if (checkBounds(px, py)) {
-                pointsArray.push(new Point(px, py));
-                squiggleLength += distance;
-            } else {
-                break;
-            }
-        }
-
-        // check if squiggle is worth keeping
-        let percentBig = numBigTurns / (numBigTurns + numSmallTurns);
-        if (percentBig > bigThreshold || squiggleLength < length.selected - 100) {
-            goodArt = false;
-            seed++;
-        } else {
-            goodArt = true;
-        }
-    }
-
-    return pointsArray;
-}
-
-function checkBounds(px, py) {
-    return !(px >= width - buffer || px <= buffer || py >= height - buffer || py <= buffer);
-}
-
-function drawSquiggle(points, renderer) {
-    renderer.background(255);
-
-    if (showField) {
-        showPerlinField();
-    }
-
-    renderer.noFill();
-    renderer.stroke(0, 0, 0);
-    renderer.strokeWeight(2);
-
-    renderer.beginShape();
-    renderer.curveVertex(points[0].x, points[0].y);
-    for (let i = 0; i < points.length; i++) {
-        renderer.curveVertex(points[i].x, points[i].y);
-    }
-    renderer.endShape();
-}
-
-function showPerlinField() {
-    noStroke();
-
-    for (let y = 0; y < height; y += 5) {
-        for (let x = 0; x < width; x += 5) {
-            let nShading = noise(x / scale, y / scale);
-            let shading = map(nShading, 0, 1, 75, 255);
-            fill(shading);
-            rect(x, y, 5, 5);
-        }
-    }
-}
-
-function keyPressed() {
-    if (key === 's') {
-        let filename = "generated/squiggle-seed" + seed + ".svg";
-        // Save the canvas as an SVG file
-        saveCanvas(filename, 'svg');
-    } else if (key === 'f') {
-        showField = !showField;
-        loop();
-    }
-}
-
-function touchStarted() {
-    // check if the touch happened inside the canvas area
-    if (touches.length > 0 && touches[0].y < height) {
-        seed++;
-        loop();
-    }
-}
-
-function remap(value, oldMin, oldMax, newMin, newMax) {
-    return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
-}
-class Point {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
-
-
-// API stuff
-
-
-// const form = document.getElementById("squiggle-form");
-// const message = document.getElementById("message");
-
-// form.addEventListener("submit", async function (event) {
+// API POST
 async function sendData() {
 
     const urlParams = new URLSearchParams(window.location.search);
