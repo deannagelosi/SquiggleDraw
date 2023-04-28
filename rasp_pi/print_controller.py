@@ -40,8 +40,8 @@ def main():
         time.sleep(2)
 
 def read_data(cursor):
-    # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_status of FALSE
-    cursor.execute("SELECT id, datetime, author FROM squiggles WHERE receipt_status = FALSE;")
+    # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_printed of FALSE
+    cursor.execute("SELECT id, datetime, author FROM squiggles WHERE receipt_printed = FALSE;")
 
     # Fetch all the rows returned by the query
     rows = cursor.fetchall()
@@ -50,9 +50,9 @@ def read_data(cursor):
 
 def set_printed(cursor, rows):
     # Prepare the UPDATE query template
-    query = "UPDATE squiggles SET receipt_status = TRUE WHERE id = %s;"
+    query = "UPDATE squiggles SET receipt_printed = TRUE WHERE id = %s;"
 
-    # Loop through the rows and update the receipt_status for each row
+    # Loop through the rows and update the receipt_printed for each row
     for row in rows:
         id_key = row[0]
         cursor.execute(query, (id_key,))
