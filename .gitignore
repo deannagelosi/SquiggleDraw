@@ -3,3 +3,9 @@ api_config.json
 
 # python files
 __pycache__
+
+# Qt Designer temp files
+/qt
+
+# DS_Store
+.DS_Store
