@@ -41,6 +41,17 @@ Rectangle {
             }
         }
     ]
+
+    // setting up event emitter (signal)
+    signal clicked()
+    
+    // trigger event
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            play.clicked()
+        }
+    }
 }
 
 /*##^##

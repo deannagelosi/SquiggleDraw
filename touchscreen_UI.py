@@ -41,6 +41,10 @@ class Controller(QObject):
 
         play_button = self.get_object("play_button")
         play_button.setProperty("state", "state_ready")
+        # listens for clicks
+        play_button.clicked.connect(self.press_play)
+        stop_button.clicked.connect(self.press_stop)
+
 
     def get_object(self, object_name):
         # Search for specific components by objectName
@@ -50,6 +54,26 @@ class Controller(QObject):
             raise ValueError(f"Can't find object: {object_name}")
         
         return obj
+    
+    def press_play(self):
+        # find button
+        stop_button = self.get_object("stop_button")
+        play_button = self.get_object("play_button")
+
+        # press button
+        if play_button.property("state") == "state_ready":
+            play_button.setProperty("state", "state_unavailable")
+            stop_button.setProperty("state", "state_ready")
+
+    def press_stop(self):
+        # find button
+        stop_button = self.get_object("stop_button")
+        play_button = self.get_object("play_button")
+
+        # press button
+        if stop_button.property("state") == "state_ready":
+            stop_button.setProperty("state", "state_unavailable")
+            play_button.setProperty("state", "state_ready")
     
 if __name__ == '__main__':
     main()
