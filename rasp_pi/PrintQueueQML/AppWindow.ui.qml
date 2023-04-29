@@ -6,7 +6,7 @@ ApplicationWindow {
     width: 800
     height: 480
     visible: true
-    visibility: Window.FullScreen
+    // visibility: Window.FullScreen
     title: "SquiggleQueue"
 
     Text {
@@ -56,19 +56,15 @@ ApplicationWindow {
         height: 100
     }
 
-    Rectangle {
-        id: table_placeholder
+    QueueTable {
+        id: table
+        objectName: "queue_table"
         x: 30
         y: 94
         width: 573
         height: 352
-        color: "#f0f0f0"
-        radius: 6
-        border.color: "#40000000"
-        border.width: 1
+        tableModel: dataProvider.getData()
     }
-
-
 }
 
 /*##^##

@@ -2,7 +2,7 @@ import sys, math
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
-from db_controller import db_connect, read_queue_data
+# from db_controller import db_connect, read_queue_data
 import time
 
 def main(): 
@@ -11,38 +11,38 @@ def main():
     # Create an instance of the controller and add it to the QML context
     controller = Controller();
 
-    # while True:
-    cursor, db = db_connect()
-    rows = read_queue_data(cursor)
+    # Execute application and wait for exit
+    sys.exit(app.exec())
 
-    if rows:
+    # # while True:
+    # cursor, db = db_connect()
+    # rows = read_queue_data(cursor)
 
-        # printer.feed(2)
-        for row in rows:
-            print(row)
-        #     # Format the datetime object as a string
-        #     datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
-        #     author = row[2]
+    # if rows:
 
-        #     # print(type(row[0]))
-        #     printer.print(datetime + ' ' + author)
+    #     # printer.feed(2)
+    #     for row in rows:
+    #         print(row)
+    #     #     # Format the datetime object as a string
+    #     #     datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
+    #     #     author = row[2]
 
-        #     printer.feed(2)
+    #     #     # print(type(row[0]))
+    #     #     printer.print(datetime + ' ' + author)
 
-        # printer.feed(4)
-        # set_printed(cursor, rows)
+    #     #     printer.feed(2)
 
-        # Commit the transaction
-        # db.commit()
+    #     # printer.feed(4)
+    #     # set_printed(cursor, rows)
 
-    cursor.close()
-    db.close()
+    #     # Commit the transaction
+    #     # db.commit()
+
+    # cursor.close()
+    # db.close()
 
     # Wait for 2 seconds before looping again
     # time.sleep(2)
-
-    # Execute application and wait for exit
-    sys.exit(app.exec())
 
 class Controller(QObject):
     def __init__(self):
@@ -52,8 +52,15 @@ class Controller(QObject):
         self.engine.load('rasp_pi/PrintQueueQML/AppWindow.ui.qml')
         self.root_object = self.engine.rootObjects()[0]
 
+        # Load class that provides db data to the UI table
+        data_provider = DataProvider()
+        self.engine.rootContext().setContextProperty("dataProvider", data_provider)
+
         # Setup the UI interactivity
         self.setup_screen()
+
+        # Setup ui variables
+        self.current_row = 0
 
         # Fetch DB data and update
 
@@ -77,6 +84,9 @@ class Controller(QObject):
         play_button.clicked.connect(self.press_play)
         stop_button.clicked.connect(self.press_stop)
 
+        # Setup the table
+        queue_table = self.get_object("queue_table")
+        queue_table.rowChanged.connect(self.which_row)
 
     def get_object(self, object_name):
         # Search for specific components by objectName
@@ -97,6 +107,9 @@ class Controller(QObject):
             play_button.setProperty("state", "state_unavailable")
             stop_button.setProperty("state", "state_ready")
 
+            # Call any print code here
+            print(f"Print the squiggle on row {self.current_row}")
+
     def press_stop(self):
         # find button
         stop_button = self.get_object("stop_button")
@@ -106,6 +119,27 @@ class Controller(QObject):
         if stop_button.property("state") == "state_ready":
             stop_button.setProperty("state", "state_unavailable")
             play_button.setProperty("state", "state_ready")
-    
+
+    def which_row(self, row):
+        # test selecting the current row
+        print(f"Current Row: {row}")
+        self.current_row = row
+
+
+class DataProvider(QObject):
+    # Create a custom class to allow the QML to access the db functions
+
+    @pyqtSlot(result="QVariantList")
+    def getData(self):
+        return get_data()
+
+def get_data():
+    # Test data. Convert data from the db into a list of dictionaries
+    data = [
+        {"column1": "Value1", "column2": "Value2"},
+        {"column1": "Value3", "column2": "Value4"},
+    ]
+    return data
+
 if __name__ == '__main__':
     main()
