@@ -1,7 +1,7 @@
 import sys, math
-from PyQt6.QtWidgets import QApplication
-from PyQt6.QtQml import QQmlApplicationEngine
-from PyQt6.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtQml import QQmlApplicationEngine
+from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
 import time
 
