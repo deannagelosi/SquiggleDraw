@@ -39,7 +39,7 @@ def main():
     db.close()
 
     # Wait for 2 seconds before looping again
-    time.sleep(2)
+    # time.sleep(2)
 
     # Execute application and wait for exit
     sys.exit(app.exec())
@@ -49,12 +49,11 @@ class Controller(QObject):
         super().__init__()
         # Create and initialize the QML engine
         self.engine = QQmlApplicationEngine()
-        self.engine.load('PrintQueueQML/AppWindow.qml')
+        self.engine.load('rasp_pi/PrintQueueQML/AppWindow.ui.qml')
         self.root_object = self.engine.rootObjects()[0]
+
+        # Setup the UI interactivity
         self.setup_screen()
-
-        # Setup global program variables
-
 
         # Fetch DB data and update
 
