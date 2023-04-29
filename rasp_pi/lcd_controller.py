@@ -2,12 +2,45 @@ import sys, math
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
+from db_controller import db_connect, read_queue_data
+import time
 
 def main(): 
     # Launch the UI
     app = QApplication(sys.argv)
     # Create an instance of the controller and add it to the QML context
     controller = Controller();
+
+    # while True:
+    cursor, db = db_connect()
+    rows = read_queue_data(cursor)
+
+    if rows:
+
+        # printer.feed(2)
+        for row in rows:
+            print(row)
+        #     # Format the datetime object as a string
+        #     datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
+        #     author = row[2]
+
+        #     # print(type(row[0]))
+        #     printer.print(datetime + ' ' + author)
+
+        #     printer.feed(2)
+
+        # printer.feed(4)
+        # set_printed(cursor, rows)
+
+        # Commit the transaction
+        # db.commit()
+
+    cursor.close()
+    db.close()
+
+    # Wait for 2 seconds before looping again
+    time.sleep(2)
+
     # Execute application and wait for exit
     sys.exit(app.exec())
 
