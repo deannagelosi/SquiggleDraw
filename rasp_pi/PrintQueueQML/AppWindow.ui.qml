@@ -1,10 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Window 2.2 
 
 ApplicationWindow {
-    visible: true
     width: 800
     height: 480
+    visible: true
+    visibility: Window.FullScreen
     title: "SquiggleQueue"
 
     Text {
