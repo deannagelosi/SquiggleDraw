@@ -6,6 +6,7 @@ from db_controller import db_connect, read_queue_data
 from print_controller import setup_printer, print_receipt
 from axi_controller import setup_plotter, plot_svg, stop_plot
 import time
+import threading
 
 table_data = []
 
@@ -116,13 +117,13 @@ class Controller(QObject):
             play_button.setProperty("state", "state_unavailable")
             stop_button.setProperty("state", "state_ready")
 
-            time.sleep(0.2)
-
             # Retrieve data for selected record
             selected_row = self.find_by_id(table_data, self.current_id)
 
-            plot_svg(self.axi, selected_row["svg_data"])
-            print_receipt(self.thermal, selected_row)
+            # the axidraw and thermal printer block the UI. run in a thread instead                
+            hw_thread = threading.Thread(target=self.print_and_plot, args=(selected_row,))
+            # Start the thread
+            hw_thread.start()
 
     def press_stop(self):
         # find button
@@ -147,6 +148,10 @@ class Controller(QObject):
             if row['id'] == search_id:
                 return row
         return None
+    
+    def print_and_plot(self, row):
+        plot_svg(self.axi, row["svg_data"])
+        print_receipt(self.thermal, row)
 
 class DataProvider(QObject):
     # Create a custom class to allow the QML to access the db functions

@@ -12,8 +12,9 @@ def plot_svg(axi, svg_string):
     axi.plot_run()  
 
 def stop_plot(axi):
+    # pause print, clear svg from setup
     axi.options.mode = "manual"
-    axi.options.manual_cmd = "strip_data"
+    axi.plot_setup()
     axi.plot_run()
 
     # return home and disable motors
@@ -30,7 +31,6 @@ def disable_motors(axi):
 def enable_motors(axi):
     axi.penup()
     axi.plot_setup()
-    print("yo")
     axi.options.mode = "manual"
     axi.options.manual_cmd = "enable_xy"
     axi.plot_run()
