@@ -63,7 +63,7 @@ ApplicationWindow {
         y: 94
         width: 573
         height: 352
-        tableModel: dataProvider.getData()
+        tableModel: dataProvider.get_data()
     }
 }
 

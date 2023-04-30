@@ -8,7 +8,7 @@ from axi_controller import setup_plotter, plot_svg, stop_plot
 import time
 import threading
 
-table_data = []
+# table_data = []
 
 def main(): 
     # Launch the UI
@@ -62,8 +62,8 @@ class Controller(QObject):
         self.root_object = self.engine.rootObjects()[0]
 
         # Load class that provides db data to the UI table
-        data_provider = DataProvider()
-        self.engine.rootContext().setContextProperty("dataProvider", data_provider)
+        self.db_data = DataProvider()
+        self.engine.rootContext().setContextProperty("dataProvider", self.db_data)
 
         # Setup the UI interactivity
         self.setup_screen()
@@ -72,6 +72,12 @@ class Controller(QObject):
         self.current_id = 1
 
         # Fetch DB data and update
+
+        # Set up a QTimer to refresh the data every 5 seconds
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.db_data.check_updates)
+        self.timer.start(3000)  # Update every 5 seconds (5000 milliseconds)
+
 
         # Create a QTimer to update every x seconds
         # self.timer = QTimer()
@@ -118,7 +124,7 @@ class Controller(QObject):
             # stop_button.setProperty("state", "state_ready")
 
             # Retrieve data for selected record
-            selected_row = self.find_by_id(table_data, self.current_id)
+            selected_row = self.find_by_id(self.db_data.table_data, self.current_id)
 
             # the axidraw and thermal printer block the UI. run in a thread instead                
             hw_thread = threading.Thread(target=self.print_and_plot, args=(selected_row,))
@@ -154,34 +160,70 @@ class Controller(QObject):
         print_receipt(self.thermal, row)
 
 class DataProvider(QObject):
-    # Create a custom class to allow the QML to access the db functions
+    # Custom class to allow QML access to the db function
+    def __init__(self):
+        super().__init__()
+
+        self.table_data = self.get_data()
+
+        # signal for when new squiggles
+        self.dataChanged = pyqtSignal()
 
     @pyqtSlot(result="QVariantList")
-    def getData(self):
-        return get_data()
+    def get_data(self):
+        cursor, db = db_connect()
+        rows = read_queue_data(cursor)
 
-def get_data():
-    cursor, db = db_connect()
-    rows = read_queue_data(cursor)
+        # Get the column names from the cursor description
+        column_names = [desc[0] for desc in cursor.description]
 
-    # Get the column names from the cursor description
-    column_names = [desc[0] for desc in cursor.description]
+        # close the db
+        cursor.close()
+        db.close()
 
-    # Convert the list of tuples into a list of dictionaries
-    result = [dict(zip(column_names, row)) for row in rows]
+        # Convert the list of tuples into a list of dictionaries
+        result = [dict(zip(column_names, row)) for row in rows]
 
-    for row in result:
-        row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
-        row["axi_printed"] = str(row["axi_printed"])
-        row["receipt_printed"] = str(row["receipt_printed"])
+        for row in result:
+            row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
+            row["axi_printed"] = str(row["axi_printed"])
+            row["receipt_printed"] = str(row["receipt_printed"])
 
-    # print("result: ")
-    # print(result)
+        return result
 
-    # Update global value
-    global table_data
-    table_data = result
-    return result
+        # results = get_data()
+
+        # # Update global value
+        # global table_data
+        # table_data = results
+
+        # return results
+    
+    def check_updates(self):
+        results = self.get_data()
+
+        if len(results) != len(self.table_data):
+            # global table_data
+            self.table_data = results
+            print("new squiggle!")
+            self.dataChanged.emit()
+
+# def get_data():
+    # cursor, db = db_connect()
+    # rows = read_queue_data(cursor)
+
+    # # Get the column names from the cursor description
+    # column_names = [desc[0] for desc in cursor.description]
+
+    # # Convert the list of tuples into a list of dictionaries
+    # result = [dict(zip(column_names, row)) for row in rows]
+
+    # for row in result:
+    #     row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
+    #     row["axi_printed"] = str(row["axi_printed"])
+    #     row["receipt_printed"] = str(row["receipt_printed"])
+
+    # return result
 
     # Test data. Convert data from the db into a list of dictionaries
     # data = [

@@ -69,5 +69,13 @@ Rectangle {
             var selectedId = tableView.model[tableView.currentRow].id
             rowChanged(selectedId)
         }
+
+        Connections {
+            target: dataProvider
+
+            onDataChanged: {
+                tableView.model = dataProvider.get_data()
+            }
+        }
     }
 }
