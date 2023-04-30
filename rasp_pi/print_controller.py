@@ -38,6 +38,24 @@ def main():
         # Wait for 2 seconds before looping again
         time.sleep(2)
 
+def print_receipt(data):
+    # setup printer
+    printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
+
+    # print receipt
+    printer.feed(2)
+    printer.print(data["datetime"])
+    printer.print(data["author"])
+    printer.feed(4)
+
+    # update database to mark printed
+    row_id = data["id"]
+    rows = [[row_id]]
+    cursor, db = db_connect()
+    set_printed(cursor, rows)
+    cursor.close()
+    db.close()
+
 def print_image(printer):
     printer.feed(1)
     # Print the test squiggle

@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
+from print_controller import print_receipt
 import time
 
 table_data = []
@@ -113,7 +114,8 @@ class Controller(QObject):
             # Retrieve data for selected record
             selected_row = self.find_by_id(table_data, self.current_id)
 
-            print(selected_row)
+            # print(selected_row)
+            print_receipt(selected_row)
             
             # Call to print thermal receipt
             # print(f"Print the squiggle on row {self.current_row}")
@@ -134,12 +136,8 @@ class Controller(QObject):
         self.current_id = selected_id
     
     def find_by_id(self, data, search_id):
-        print(f"search id: {search_id}")
-        print(f"data length: {len(data)}")
         for row in data:
-            print(row)
             if row['id'] == search_id:
-                print("found")
                 return row
         return None
 
