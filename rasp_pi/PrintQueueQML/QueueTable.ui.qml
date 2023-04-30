@@ -46,12 +46,12 @@ Rectangle {
 
         TableViewColumn {
             title: "ID"
-            role: "column1"
+            role: "id"
             width: 100
         }
         TableViewColumn {
             title: "Name"
-            role: "column2"
+            role: "datetime"
             width: 200
         }
 

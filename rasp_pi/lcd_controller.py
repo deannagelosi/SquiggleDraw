@@ -2,7 +2,7 @@ import sys, math
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
-# from db_controller import db_connect, read_queue_data
+from db_controller import db_connect, read_queue_data
 import time
 
 def main(): 
@@ -134,12 +134,24 @@ class DataProvider(QObject):
         return get_data()
 
 def get_data():
+    cursor, db = db_connect()
+    rows = read_queue_data(cursor)
+
+    # Get the column names from the cursor description
+    column_names = [desc[0] for desc in cursor.description]
+
+    # Convert the list of tuples into a list of dictionaries
+    result = [dict(zip(column_names, row)) for row in rows]
+    print("result: ")
+    print(result)
+    return result
+
     # Test data. Convert data from the db into a list of dictionaries
-    data = [
-        {"column1": "Value1", "column2": "Value2"},
-        {"column1": "Value3", "column2": "Value4"},
-    ]
-    return data
+    # data = [
+    #     {"column1": "Value1", "column2": "Value2"},
+    #     {"column1": "Value3", "column2": "Value4"},
+    # ]
+    # return data
 
 if __name__ == '__main__':
     main()
