@@ -1,4 +1,5 @@
 from pyaxidraw import axidraw
+import time
 
 def setup_plotter():
     # setup axidraw
@@ -16,10 +17,13 @@ def stop_plot(axi):
     # pause print, clear svg from setup
     axi.options.mode = "manual"
     axi.options.manual_cmd = "disable_xy"
-    axi.penup()
-    axi.moveto(0, 0)
     # axi.plot_setup()
     axi.plot_run()
+
+    time.sleep(1)
+
+    axi.penup()
+    axi.moveto(0, 0)
 
     # return home and disable motors
     # axi.moveto(0, 0)
