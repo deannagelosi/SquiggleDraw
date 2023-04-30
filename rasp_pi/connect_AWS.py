@@ -7,6 +7,13 @@ def main():
     # Load API info
     with open('api_config.json', 'r') as file:
         config = json.load(file)
+        print("1")
+        print(config)
+
+    with open('rasp_pi/api_config.json', 'r') as file:
+        config = json.load(file)
+        print("2")
+        print(config)
 
     while True:
         # make API request
