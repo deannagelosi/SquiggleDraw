@@ -30,6 +30,7 @@ def disable_motors(axi):
 def enable_motors(axi):
     axi.penup()
     axi.plot_setup()
+    print("yo")
     axi.options.mode = "manual"
     axi.options.manual_cmd = "enable_xy"
     axi.plot_run()

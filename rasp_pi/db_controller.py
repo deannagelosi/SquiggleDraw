@@ -19,6 +19,7 @@ def db_connect():
 def set_printed(cursor, row_id):
     # Prepare the UPDATE query template
     query = "UPDATE squiggles SET receipt_printed = TRUE WHERE id = %s;"
+    print(row_id)
     cursor.execute(query, (row_id,))
 
 def read_receipt_data(cursor):

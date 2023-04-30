@@ -116,6 +116,8 @@ class Controller(QObject):
             play_button.setProperty("state", "state_unavailable")
             stop_button.setProperty("state", "state_ready")
 
+            time.sleep(0.2)
+
             # Retrieve data for selected record
             selected_row = self.find_by_id(table_data, self.current_id)
 

@@ -57,6 +57,8 @@ def print_receipt(printer, data):
 
     cursor, db = db_connect()
     set_printed(cursor, row_id)
+    # Commit the transaction
+    db.commit()
     cursor.close()
     db.close()
 
