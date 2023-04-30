@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
-from print_controller import print_receipt
-from axi_controller import plot_svg, stop_plot
+from print_controller import setup_printer, print_receipt
+from axi_controller import setup_plotter, plot_svg, stop_plot
 import time
 
 table_data = []
@@ -51,6 +51,10 @@ def main():
 class Controller(QObject):
     def __init__(self):
         super().__init__()
+        # Setup hardware
+        self.thermal = setup_printer()
+        self.axi = setup_plotter()
+
         # Create and initialize the QML engine
         self.engine = QQmlApplicationEngine()
         self.engine.load('PrintQueueQML/AppWindow.ui.qml')
@@ -116,8 +120,8 @@ class Controller(QObject):
             selected_row = self.find_by_id(table_data, self.current_id)
 
             # print(selected_row)
-            plot_svg(selected_row["svg_data"])
-            print_receipt(selected_row)
+            plot_svg(self.axi, selected_row["svg_data"])
+            print_receipt(self.thermal, selected_row)
 
             # Print done, switch play/stop buttons back
             play_button.setProperty("state", "state_ready")
@@ -137,7 +141,7 @@ class Controller(QObject):
             play_button.setProperty("state", "state_ready")
 
             # Stop axi plotting
-            stop_plot()
+            stop_plot(self.axi)
 
     def which_row(self, selected_id):
         # test selecting the current row
