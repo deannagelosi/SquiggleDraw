@@ -17,11 +17,13 @@ Rectangle {
 
         rowDelegate: Rectangle {
             color: (styleData.selected ? "#f0f0f0" : "white")
+            height: 40
         }
 
         itemDelegate: Text {
             text: styleData.value
             color: "black"
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         headerDelegate: Rectangle {
