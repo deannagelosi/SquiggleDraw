@@ -167,6 +167,9 @@ def get_data():
 
     # print("result: ")
     # print(result)
+
+    # Update global value
+    global table_data
     table_data = result
     return result
 
