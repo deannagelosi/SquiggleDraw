@@ -25,10 +25,10 @@ def stop_plot(axi):
     # axi.penup()
     # pause print, clear svg from setup
     # axi.options.mode = "manual"
-    # axi.options.mode = "res_home"
-    axi.options.manual_cmd = "disable_xy"
-    # 
-    axi.plot_run()
+    # # axi.options.mode = "res_home"
+    # axi.options.manual_cmd = "disable_xy"
+    # # 
+    # axi.plot_run()
 
     # return home and disable motors
     # axi.moveto(0, 0)
