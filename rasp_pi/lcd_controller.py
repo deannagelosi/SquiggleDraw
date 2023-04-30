@@ -49,7 +49,7 @@ class Controller(QObject):
         super().__init__()
         # Create and initialize the QML engine
         self.engine = QQmlApplicationEngine()
-        self.engine.load('rasp_pi/PrintQueueQML/AppWindow.ui.qml')
+        self.engine.load('PrintQueueQML/AppWindow.ui.qml')
         self.root_object = self.engine.rootObjects()[0]
 
         # Load class that provides db data to the UI table
