@@ -15,12 +15,17 @@ def plot_svg(axi, svg_string):
     axi.plot_run()  
 
 def stop_plot(axi):
+    axi.plot_setup()
+    axi.options.mode = "manual"
+    axi.options.manual_cmd = "disable_xy"
+    axi.plot_run()
+
     # ad.plot_setup("file.svg")
     # output_svg = axi.plot_run(True)
 
     # axi.plot_setup(output_svg)
-    axi.options.mode = "res_home"
-    output_homed = axi.plot_run(True)
+    # axi.options.mode = "res_home"
+    # output_homed = axi.plot_run(True)
 
     # axi.penup()
     # pause print, clear svg from setup
@@ -34,10 +39,10 @@ def stop_plot(axi):
     # axi.moveto(0, 0)
     # disable_motors(axi)
 
-def pen_home(axi):
-    # axi.plot_setup()
-    axi.penup()
-    # axi.moveto(0, 0)
+# def pen_home(axi):
+#     # axi.plot_setup()
+#     axi.penup()
+#     # axi.moveto(0, 0)
 
 def disable_motors(axi):
     axi.penup()
