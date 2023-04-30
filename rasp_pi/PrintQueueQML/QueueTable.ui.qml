@@ -34,16 +34,16 @@ Rectangle {
         }
     }
 
-    Component {
-        id: titleDelegate
+    // Component {
+    //     id: titleDelegate
 
-        Text {
-            text: styleData.value
-            color: "black"
-            padding: 4
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
+    //     Text {
+    //         text: styleData.value
+    //         color: "black"
+    //         padding: 4
+    //         anchors.verticalCenter: parent.verticalCenter
+    //     }
+    // }
 
     Component {
         id: statusDelegate
@@ -61,17 +61,6 @@ Rectangle {
         id: tableView
         anchors.fill: parent
 
-        rowDelegate: Rectangle {
-            color: (styleData.selected ? "#f0f0f0" : "white")
-            height: 40
-        }
-
-        itemDelegate: Text {
-            text: styleData.value
-            color: "black"
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
         headerDelegate: Rectangle {
             height: 30
             color: "#f0f0f0"
@@ -85,6 +74,18 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
+        rowDelegate: Rectangle {
+            color: (styleData.selected ? "#f0f0f0" : "white")
+            height: 40
+        }
+
+        // itemDelegate: Text {
+        //     text: styleData.value
+        //     color: "black"
+        //     anchors.verticalCenter: parent.verticalCenter
+        // }
+
 
         // Rectangle {
         //     anchors.fill: parent
@@ -106,12 +107,12 @@ Rectangle {
             delegate: authorDelegate
         }
 
-        TableViewColumn {
-            title: "Title"
-            role: "title"
-            width: titleDelegate.implicitWidth + 8
-            delegate: titleDelegate
-        }
+        // TableViewColumn {
+        //     title: "Title"
+        //     role: "title"
+        //     width: titleDelegate.implicitWidth + 8
+        //     delegate: titleDelegate
+        // }
 
         TableViewColumn {
             title: "Printed"

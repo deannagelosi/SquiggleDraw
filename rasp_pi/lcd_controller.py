@@ -158,6 +158,8 @@ def get_data():
 
     for row in result:
         row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
+        row["axi_printed"] = str(row["axi_printed"])
+        row["receipt_printed"] = str(row["receipt_printed"])
 
     # print("result: ")
     # print(result)
