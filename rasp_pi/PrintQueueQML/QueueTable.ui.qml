@@ -122,7 +122,7 @@ Rectangle {
         }
 
         onCurrentRowChanged: {
-            var selectedId = tableView.model.get(tableView.currentRow).id
+            var selectedId = tableView.model[tableView.currentRow].id
             rowChanged(selectedId)
         }
     }
