@@ -11,31 +11,9 @@ Rectangle {
     property alias selectedRow: tableView.currentRow
     signal rowChanged(int row)
     
-    // Formatting for each column in the table
-    Component {
-        id: datetimeDelegate
-
-        Text {
-            text: styleData.value
-            color: "black"
-            padding: 4
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
-    Component {
-        id: authorDelegate
-
-        Text {
-            text: styleData.value
-            color: "black"
-            padding: 4
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
+    // // Formatting for each column in the table
     // Component {
-    //     id: titleDelegate
+    //     id: datetimeDelegate
 
     //     Text {
     //         text: styleData.value
@@ -45,16 +23,38 @@ Rectangle {
     //     }
     // }
 
-    Component {
-        id: statusDelegate
+    // Component {
+    //     id: authorDelegate
 
-        Text {
-            text: styleData.value
-            color: "black"
-            padding: 4
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
+    //     Text {
+    //         text: styleData.value
+    //         color: "black"
+    //         padding: 4
+    //         anchors.verticalCenter: parent.verticalCenter
+    //     }
+    // }
+
+    // // Component {
+    // //     id: titleDelegate
+
+    // //     Text {
+    // //         text: styleData.value
+    // //         color: "black"
+    // //         padding: 4
+    // //         anchors.verticalCenter: parent.verticalCenter
+    // //     }
+    // // }
+
+    // Component {
+    //     id: statusDelegate
+
+    //     Text {
+    //         text: styleData.value
+    //         color: "black"
+    //         padding: 4
+    //         anchors.verticalCenter: parent.verticalCenter
+    //     }
+    // }
 
 
     TableView {
@@ -80,11 +80,11 @@ Rectangle {
             height: 40
         }
 
-        // itemDelegate: Text {
-        //     text: styleData.value
-        //     color: "black"
-        //     anchors.verticalCenter: parent.verticalCenter
-        // }
+        itemDelegate: Text {
+            text: styleData.value
+            color: "black"
+            anchors.verticalCenter: parent.verticalCenter
+        }
 
 
         // Rectangle {
@@ -96,15 +96,17 @@ Rectangle {
         TableViewColumn {
             title: "Timestamp"
             role: "datetime"
-            width: datetimeDelegate.implicitWidth + 8
-            delegate: datetimeDelegate
+            width: 200
+            // width: datetimeDelegate.implicitWidth + 8
+            // delegate: datetimeDelegate
         }
 
         TableViewColumn {
             title: "Name"
             role: "author"
-            width: authorDelegate.implicitWidth + 8
-            delegate: authorDelegate
+            width: 100
+            // width: authorDelegate.implicitWidth + 8
+            // delegate: authorDelegate
         }
 
         // TableViewColumn {
@@ -117,8 +119,9 @@ Rectangle {
         TableViewColumn {
             title: "Printed"
             role: "axi_printed"
-            width: statusDelegate.implicitWidth + 8
-            delegate: statusDelegate
+            width: 100
+            // width: statusDelegate.implicitWidth + 8
+            // delegate: statusDelegate
         }
 
         onCurrentRowChanged: {
