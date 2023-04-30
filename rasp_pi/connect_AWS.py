@@ -7,18 +7,15 @@ def main():
     # Load API info
     with open('api_config.json', 'r') as file:
         config = json.load(file)
-        print("1")
-        print(config)
-
-    with open('rasp_pi/api_config.json', 'r') as file:
-        config = json.load(file)
-        print("2")
-        print(config)
 
     while True:
         # make API request
         response = get_request(config)
+        print("1")
+        print(response)
         data = json.loads(response.json()["body"])
+        print("2")
+        print(data)
         
         if data:
             # source: https://stackoverflow.com/questions/17915117/nested-dictionary-comprehension-python
