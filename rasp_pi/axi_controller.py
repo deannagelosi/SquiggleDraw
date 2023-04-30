@@ -1,5 +1,4 @@
 from pyaxidraw import axidraw
-import time
 
 def setup_plotter():
     # setup axidraw
@@ -16,36 +15,8 @@ def plot_svg(axi, svg_string):
 
 def stop_plot(axi):
     axi.plot_setup()
-    # axi.options.mode = "manual"
-    # axi.options.manual_cmd = "disable_xy"
     axi.plot_run()
-
-    axi.moveto(0, 0)
     disable_motors(axi)
-
-    # ad.plot_setup("file.svg")
-    # output_svg = axi.plot_run(True)
-
-    # axi.plot_setup(output_svg)
-    # axi.options.mode = "res_home"
-    # output_homed = axi.plot_run(True)
-
-    # axi.penup()
-    # pause print, clear svg from setup
-    # axi.options.mode = "manual"
-    # # axi.options.mode = "res_home"
-    # axi.options.manual_cmd = "disable_xy"
-    # # 
-    # axi.plot_run()
-
-    # return home and disable motors
-    # axi.moveto(0, 0)
-    # disable_motors(axi)
-
-# def pen_home(axi):
-#     # axi.plot_setup()
-#     axi.penup()
-#     # axi.moveto(0, 0)
 
 def disable_motors(axi):
     axi.penup()
