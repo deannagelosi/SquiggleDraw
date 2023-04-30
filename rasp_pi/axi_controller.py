@@ -12,11 +12,13 @@ def plot_svg(axi, svg_string):
     axi.plot_run()  
 
 def stop_plot(axi):
-    axi.connect()
-    axi.pause()
+    axi.options.mode = "manual"
+    axi.options.manual_cmd = "strip_data"
+    axi.plot_run()
+
+    # return home and disable motors
     axi.moveto(0, 0)
     disable_motors(axi)
-    axi.disconnect()
 
 def disable_motors(axi):
     axi.penup()

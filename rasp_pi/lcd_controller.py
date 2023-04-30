@@ -119,12 +119,6 @@ class Controller(QObject):
             # Retrieve data for selected record
             selected_row = self.find_by_id(table_data, self.current_id)
 
-            # print(selected_row)
-            print("axi: ")
-            print(self.axi)
-            print("svg data: ")
-            print(selected_row["svg_data"])
-
             plot_svg(self.axi, selected_row["svg_data"])
             print_receipt(self.thermal, selected_row)
 
