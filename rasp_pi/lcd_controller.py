@@ -133,7 +133,7 @@ class Controller(QObject):
         print(f"Current ID: {selected_id}")
         self.current_id = selected_id
     
-    def find_by_id(data, searchId):
+    def find_by_id(self, data, searchId):
         for row in data:
             if row['id'] == searchId:
                 return row
