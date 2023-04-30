@@ -6,6 +6,10 @@ from datetime import datetime
 from db_controller import db_connect, read_receipt_data, set_printed
 import time
 
+# setup printer
+printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
+
+
 def main():
     printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
     # print_image(printer)
@@ -39,14 +43,13 @@ def main():
         time.sleep(2)
 
 def print_receipt(data):
-    # setup printer
-    printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
+    global printer
 
     # print receipt
     printer.feed(2)
     printer.print(data["datetime"])
     printer.print(data["author"])
-    printer.feed(4)
+    printer.feed(5)
 
     # update database to mark printed
     row_id = data["id"]
