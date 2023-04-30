@@ -115,7 +115,7 @@ class Controller(QObject):
         if play_button.property("state") == "state_ready":
             # update visuals
             play_button.setProperty("state", "state_unavailable")
-            stop_button.setProperty("state", "state_ready")
+            # stop_button.setProperty("state", "state_ready")
 
             # Retrieve data for selected record
             selected_row = self.find_by_id(table_data, self.current_id)
@@ -131,12 +131,12 @@ class Controller(QObject):
         play_button = self.get_object("play_button")
 
         # press button
-        if stop_button.property("state") == "state_ready":
-            stop_button.setProperty("state", "state_unavailable")
-            play_button.setProperty("state", "state_ready")
+        # if stop_button.property("state") == "state_ready":
+            # stop_button.setProperty("state", "state_unavailable")
+        play_button.setProperty("state", "state_ready")
 
-            # Stop axi plotting
-            stop_plot(self.axi)
+        # Stop axi plotting
+        stop_plot(self.axi)
 
     def which_row(self, selected_id):
         # test selecting the current row

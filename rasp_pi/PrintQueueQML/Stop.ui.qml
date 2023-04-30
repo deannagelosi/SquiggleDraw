@@ -6,7 +6,7 @@ Rectangle {
     width: 100
     height: 100
     color: "transparent"
-    state: "state_unavailable"
+    state: "state_ready"
 
     Shape {
         id: stop_shape
