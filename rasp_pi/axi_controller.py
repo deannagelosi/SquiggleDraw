@@ -16,8 +16,8 @@ def plot_svg(axi, svg_string):
 
 def stop_plot(axi):
     axi.plot_setup()
-    axi.options.mode = "manual"
-    axi.options.manual_cmd = "disable_xy"
+    # axi.options.mode = "manual"
+    # axi.options.manual_cmd = "disable_xy"
     axi.plot_run()
 
     # ad.plot_setup("file.svg")
