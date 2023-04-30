@@ -57,8 +57,8 @@ def insert_data(cur, json_data):
     # data = json.loads(json_data)
 
     # Prepare the INSERT query template
-    query = "INSERT INTO squiggles (datetime, author) VALUES (%s, %s);"
+    query = "INSERT INTO squiggles (datetime, squiggle_params, svg_data, author) VALUES (%s, %s, %s, %s);"
 
     # Check if data is a list (multiple records) or a dict (single record)
     for record in json_data:
-        cur.execute(query, (record['datetime'], record['author']))
+        cur.execute(query, (record['datetime'], record['squiggle_params'], record['svg_data'], record['author']))
