@@ -3,6 +3,7 @@ from pyaxidraw import axidraw
 def setup_plotter():
     # setup axidraw
     axi = axidraw.AxiDraw()
+    axi.plot_setup()
 
     return axi
 

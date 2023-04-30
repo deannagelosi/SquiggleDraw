@@ -85,7 +85,7 @@ class Controller(QObject):
 
         # Setup buttons
         stop_button = self.get_object("stop_button")
-        stop_button.setProperty("state", "state_unavailable")
+        stop_button.setProperty("state", "state_ready")
 
         play_button = self.get_object("play_button")
         play_button.setProperty("state", "state_ready")
