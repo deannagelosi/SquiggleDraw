@@ -4,7 +4,7 @@ from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
 from print_controller import setup_printer, print_receipt
-from axi_controller import setup_plotter, plot_svg, stop_plot
+from axi_controller import setup_plotter, plot_svg, stop_plot, pen_home
 import time
 import threading
 
@@ -137,6 +137,7 @@ class Controller(QObject):
 
         # Stop axi plotting
         stop_plot(self.axi)
+        pen_home(self.axi)
 
     def which_row(self, selected_id):
         # test selecting the current row
