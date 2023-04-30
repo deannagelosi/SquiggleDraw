@@ -15,10 +15,11 @@ def plot_svg(axi, svg_string):
     axi.plot_run()  
 
 def stop_plot(axi):
-    axi.penup()
+    # axi.penup()
     # pause print, clear svg from setup
-    axi.options.mode = "manual"
-    axi.options.manual_cmd = "disable_xy"
+    # axi.options.mode = "manual"
+    axi.options.mode = "res_home"
+    # axi.options.manual_cmd = "disable_xy"
     # 
     axi.plot_run()
 

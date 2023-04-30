@@ -137,7 +137,7 @@ class Controller(QObject):
 
         # Stop axi plotting
         stop_plot(self.axi)
-        pen_home(self.axi)
+        # pen_home(self.axi)
 
     def which_row(self, selected_id):
         # test selecting the current row
