@@ -12,59 +12,59 @@ def setup_printer():
 
     return printer
 
-
-def main():
-    printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
+# def main():
+    # printer = Adafruit_Thermal("/dev/serial0", 9600, timeout=5)
     # print_image(printer)
     
-    while True:
-        cursor, db = db_connect()
-        rows = read_receipt_data(cursor)
+    # while True:
+    #     cursor, db = db_connect()
+    #     rows = read_receipt_data(cursor)
 
-        if rows:
-            printer.feed(2)
-            for row in rows:
-                # Format the datetime object as a string
-                datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
-                author = row[2]
+    #     if rows:
+    #         printer.feed(2)
+    #         for row in rows:
+    #             # Format the datetime object as a string
+    #             datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
+    #             author = row[2]
 
-                # print(type(row[0]))
-                printer.print(datetime + ' ' + author)
+    #             # print(type(row[0]))
+    #             printer.print(datetime + ' ' + author)
 
-                printer.feed(2)
+    #             printer.feed(2)
 
-            printer.feed(4)
-            set_printed(cursor, rows)
+    #         printer.feed(4)
+    #         # set_printed(cursor, rows)
 
-            # Commit the transaction
-            db.commit()
+    #         # Commit the transaction
+    #         db.commit()
 
-        cursor.close()
-        db.close()
+    #     cursor.close()
+    #     db.close()
 
-        # Wait for 2 seconds before looping again
-        time.sleep(2)
+    #     # Wait for 2 seconds before looping again
+    #     time.sleep(2)
 
 def print_receipt(printer, data):
     # print receipt
-    printer.feed(2)
+    printer.feed(3)
     printer.print(data["datetime"])
     printer.print(data["author"])
     printer.feed(5)
 
     # update database to mark printed
     row_id = data["id"]
-    rows = [[row_id]]
+    print(f"mark printed: {row_id}")
+
     cursor, db = db_connect()
-    set_printed(cursor, rows)
+    set_printed(cursor, row_id)
     cursor.close()
     db.close()
 
-def print_image(printer):
-    printer.feed(1)
-    # Print the test squiggle
-    printer.printBitmap(test_squiggle.width, test_squiggle.height, test_squiggle.data)
-    printer.feed(2)
+# def print_image(printer):
+#     printer.feed(1)
+#     # Print the test squiggle
+#     printer.printBitmap(test_squiggle.width, test_squiggle.height, test_squiggle.data)
+#     printer.feed(2)
 
     # printer.sleep()      # Tell printer to sleep
 

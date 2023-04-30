@@ -16,14 +16,10 @@ def db_connect():
 
     return cursor, db
 
-def set_printed(cursor, rows):
+def set_printed(cursor, row_id):
     # Prepare the UPDATE query template
     query = "UPDATE squiggles SET receipt_printed = TRUE WHERE id = %s;"
-
-    # Loop through the rows and update the receipt_printed for each row
-    for row in rows:
-        id_key = row[0]
-        cursor.execute(query, (id_key,))
+    cursor.execute(query, (row_id,))
 
 def read_receipt_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_printed of FALSE
