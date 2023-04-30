@@ -161,13 +161,16 @@ class Controller(QObject):
 
 class DataProvider(QObject):
     # Custom class to allow QML access to the db function
+
+    # signal for when new squiggles
+    dataChanged = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
         self.table_data = self.get_data()
 
-        # signal for when new squiggles
-        self.dataChanged = pyqtSignal()
+ 
 
     @pyqtSlot(result="QVariantList")
     def get_data(self):
