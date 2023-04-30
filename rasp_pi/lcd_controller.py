@@ -4,6 +4,7 @@ from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
 from print_controller import print_receipt
+from axi_controller import plot_svg, stop_plot
 import time
 
 table_data = []
@@ -115,6 +116,7 @@ class Controller(QObject):
             selected_row = self.find_by_id(table_data, self.current_id)
 
             # print(selected_row)
+            plot_svg(selected_row["svg_data"])
             print_receipt(selected_row)
 
             # Print done, switch play/stop buttons back
@@ -133,6 +135,9 @@ class Controller(QObject):
         if stop_button.property("state") == "state_ready":
             stop_button.setProperty("state", "state_unavailable")
             play_button.setProperty("state", "state_ready")
+
+            # Stop axi plotting
+            stop_plot()
 
     def which_row(self, selected_id):
         # test selecting the current row
