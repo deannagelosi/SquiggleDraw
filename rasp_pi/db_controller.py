@@ -22,6 +22,12 @@ def set_printed(cursor, row_id):
     print(row_id)
     cursor.execute(query, (row_id,))
 
+def set_plotted(cursor, row_id):
+    # Prepare the UPDATE query template
+    query = "UPDATE squiggles SET axi_printed = TRUE WHERE id = %s;"
+    print(row_id)
+    cursor.execute(query, (row_id,))
+
 def read_receipt_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_printed of FALSE
     cursor.execute("SELECT id, datetime, author FROM squiggles WHERE receipt_printed = FALSE;")

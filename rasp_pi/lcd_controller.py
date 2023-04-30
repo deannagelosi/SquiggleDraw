@@ -2,13 +2,10 @@ import sys, math
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
-from db_controller import db_connect, read_queue_data
+from db_controller import db_connect, read_queue_data, set_plotted
 from print_controller import setup_printer, print_receipt
 from axi_controller import setup_plotter, plot_svg, stop_plot
-import time
 import threading
-
-# table_data = []
 
 def main(): 
     # Launch the UI
@@ -18,36 +15,6 @@ def main():
 
     # Execute application and wait for exit
     sys.exit(app.exec())
-
-    # # while True:
-    # cursor, db = db_connect()
-    # rows = read_queue_data(cursor)
-
-    # if rows:
-
-    #     # printer.feed(2)
-    #     for row in rows:
-    #         print(row)
-    #     #     # Format the datetime object as a string
-    #     #     datetime = row[1].strftime("%Y-%m-%d %H:%M:%S")
-    #     #     author = row[2]
-
-    #     #     # print(type(row[0]))
-    #     #     printer.print(datetime + ' ' + author)
-
-    #     #     printer.feed(2)
-
-    #     # printer.feed(4)
-    #     # set_printed(cursor, rows)
-
-    #     # Commit the transaction
-    #     # db.commit()
-
-    # cursor.close()
-    # db.close()
-
-    # Wait for 2 seconds before looping again
-    # time.sleep(2)
 
 class Controller(QObject):
     def __init__(self):
@@ -76,13 +43,7 @@ class Controller(QObject):
         # Set up a QTimer to refresh the data every 5 seconds
         self.timer = QTimer()
         self.timer.timeout.connect(self.db_data.check_updates)
-        self.timer.start(3000)  # Update every 5 seconds (5000 milliseconds)
-
-
-        # Create a QTimer to update every x seconds
-        # self.timer = QTimer()
-        # self.timer.timeout.connect(self.updateValues)
-        # self.timer.start(seconds_update * 1000)
+        self.timer.start(1500)  # Update every 5 seconds (5000 milliseconds)
 
     def setup_screen(self):
         # Two kinds of configuration: Listeners and Properties
@@ -119,9 +80,8 @@ class Controller(QObject):
 
         # press button
         if play_button.property("state") == "state_ready":
-            # update visuals
+            #  disable play
             play_button.setProperty("state", "state_unavailable")
-            # stop_button.setProperty("state", "state_ready")
 
             # Retrieve data for selected record
             selected_row = self.find_by_id(self.db_data.table_data, self.current_id)
@@ -132,15 +92,9 @@ class Controller(QObject):
             hw_thread.start()
 
     def press_stop(self):
-        # find button
-        stop_button = self.get_object("stop_button")
+        # re-enable play button
         play_button = self.get_object("play_button")
-
-        # press button
-        # if stop_button.property("state") == "state_ready":
-            # stop_button.setProperty("state", "state_unavailable")
         play_button.setProperty("state", "state_ready")
-
         # Stop axi plotting
         stop_plot(self.axi)
 
@@ -159,6 +113,13 @@ class Controller(QObject):
         plot_svg(self.axi, row["svg_data"])
         print_receipt(self.thermal, row)
 
+        cursor, db = db_connect()
+        set_plotted(cursor, row["id"])
+        # Commit the transaction
+        db.commit()
+        cursor.close()
+        db.close()
+
 class DataProvider(QObject):
     # Custom class to allow QML access to the db function
 
@@ -168,72 +129,39 @@ class DataProvider(QObject):
     def __init__(self):
         super().__init__()
 
+        # setup initial data from db
         self.table_data = self.get_data()
-
- 
 
     @pyqtSlot(result="QVariantList")
     def get_data(self):
         cursor, db = db_connect()
         rows = read_queue_data(cursor)
-
         # Get the column names from the cursor description
         column_names = [desc[0] for desc in cursor.description]
-
         # close the db
         cursor.close()
         db.close()
 
         # Convert the list of tuples into a list of dictionaries
         result = [dict(zip(column_names, row)) for row in rows]
-
         for row in result:
             row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
-            row["axi_printed"] = str(row["axi_printed"])
-            row["receipt_printed"] = str(row["receipt_printed"])
+
+            if row["axi_printed"] == None:
+                row["axi_printed"] = "False"
+            else:
+                row["axi_printed"] = str(row["axi_printed"])
 
         return result
-
-        # results = get_data()
-
-        # # Update global value
-        # global table_data
-        # table_data = results
-
-        # return results
     
     def check_updates(self):
         results = self.get_data()
 
-        if len(results) != len(self.table_data):
+        if results != self.table_data:
             # global table_data
             self.table_data = results
             print("new squiggle!")
             self.dataChanged.emit()
-
-# def get_data():
-    # cursor, db = db_connect()
-    # rows = read_queue_data(cursor)
-
-    # # Get the column names from the cursor description
-    # column_names = [desc[0] for desc in cursor.description]
-
-    # # Convert the list of tuples into a list of dictionaries
-    # result = [dict(zip(column_names, row)) for row in rows]
-
-    # for row in result:
-    #     row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
-    #     row["axi_printed"] = str(row["axi_printed"])
-    #     row["receipt_printed"] = str(row["receipt_printed"])
-
-    # return result
-
-    # Test data. Convert data from the db into a list of dictionaries
-    # data = [
-    #     {"column1": "Value1", "column2": "Value2"},
-    #     {"column1": "Value3", "column2": "Value4"},
-    # ]
-    # return data
 
 if __name__ == '__main__':
     main()

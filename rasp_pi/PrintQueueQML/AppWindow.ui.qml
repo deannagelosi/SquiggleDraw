@@ -6,7 +6,7 @@ ApplicationWindow {
     width: 800
     height: 480
     visible: true
-    // visibility: Window.FullScreen
+    visibility: Window.FullScreen
     title: "SquiggleQueue"
 
     Text {

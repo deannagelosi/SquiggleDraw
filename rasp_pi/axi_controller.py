@@ -11,7 +11,7 @@ def plot_svg(axi, svg_string):
     axi.penup()
     enable_motors(axi)
     axi.plot_setup(svg_string)
-    axi.plot_run()  
+    axi.plot_run()
 
 def stop_plot(axi):
     axi.plot_setup()
