@@ -11,52 +11,6 @@ Rectangle {
     property alias selectedRow: tableView.currentRow
     signal rowChanged(int row)
     
-    // // Formatting for each column in the table
-    // Component {
-    //     id: datetimeDelegate
-
-    //     Text {
-    //         text: styleData.value
-    //         color: "black"
-    //         padding: 4
-    //         anchors.verticalCenter: parent.verticalCenter
-    //     }
-    // }
-
-    // Component {
-    //     id: authorDelegate
-
-    //     Text {
-    //         text: styleData.value
-    //         color: "black"
-    //         padding: 4
-    //         anchors.verticalCenter: parent.verticalCenter
-    //     }
-    // }
-
-    // // Component {
-    // //     id: titleDelegate
-
-    // //     Text {
-    // //         text: styleData.value
-    // //         color: "black"
-    // //         padding: 4
-    // //         anchors.verticalCenter: parent.verticalCenter
-    // //     }
-    // // }
-
-    // Component {
-    //     id: statusDelegate
-
-    //     Text {
-    //         text: styleData.value
-    //         color: "black"
-    //         padding: 4
-    //         anchors.verticalCenter: parent.verticalCenter
-    //     }
-    // }
-
-
     TableView {
         id: tableView
         anchors.fill: parent
@@ -86,27 +40,16 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-
-        // Rectangle {
-        //     anchors.fill: parent
-        //     color: "white"
-        //     z: -1
-        // }
-
         TableViewColumn {
             title: "Timestamp"
             role: "datetime"
             width: 200
-            // width: datetimeDelegate.implicitWidth + 8
-            // delegate: datetimeDelegate
         }
 
         TableViewColumn {
             title: "Name"
             role: "author"
             width: 100
-            // width: authorDelegate.implicitWidth + 8
-            // delegate: authorDelegate
         }
 
         // TableViewColumn {
@@ -120,8 +63,6 @@ Rectangle {
             title: "Printed"
             role: "axi_printed"
             width: 100
-            // width: statusDelegate.implicitWidth + 8
-            // delegate: statusDelegate
         }
 
         onCurrentRowChanged: {
