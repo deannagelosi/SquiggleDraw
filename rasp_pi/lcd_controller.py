@@ -5,6 +5,8 @@ from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
 from db_controller import db_connect, read_queue_data
 import time
 
+table_data = []
+
 def main(): 
     # Launch the UI
     app = QApplication(sys.argv)
@@ -60,7 +62,7 @@ class Controller(QObject):
         self.setup_screen()
 
         # Setup ui variables
-        self.current_row = 0
+        self.current_id
 
         # Fetch DB data and update
 
@@ -104,11 +106,17 @@ class Controller(QObject):
 
         # press button
         if play_button.property("state") == "state_ready":
+            # update visuals
             play_button.setProperty("state", "state_unavailable")
             stop_button.setProperty("state", "state_ready")
 
-            # Call any print code here
-            print(f"Print the squiggle on row {self.current_row}")
+            # Retrieve data for selected record
+            selected_row = self.find_by_id(table_data, self.current_id)
+
+            print(selected_row)
+            
+            # Call to print thermal receipt
+            # print(f"Print the squiggle on row {self.current_row}")
 
     def press_stop(self):
         # find button
@@ -120,11 +128,16 @@ class Controller(QObject):
             stop_button.setProperty("state", "state_unavailable")
             play_button.setProperty("state", "state_ready")
 
-    def which_row(self, row):
+    def which_row(self, selected_id):
         # test selecting the current row
-        print(f"Current Row: {row}")
-        self.current_row = row
-
+        print(f"Current ID: {selected_id}")
+        self.current_id = selected_id
+    
+    def find_by_id(data, searchId):
+        for row in data:
+            if row['id'] == searchId:
+                return row
+        return None
 
 class DataProvider(QObject):
     # Create a custom class to allow the QML to access the db functions
@@ -146,8 +159,9 @@ def get_data():
     for row in result:
         row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
 
-    print("result: ")
-    print(result)
+    # print("result: ")
+    # print(result)
+    table_data = result
     return result
 
     # Test data. Convert data from the db into a list of dictionaries

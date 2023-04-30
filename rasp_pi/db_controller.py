@@ -34,6 +34,15 @@ def read_receipt_data(cursor):
     
     return rows
 
+def retrieve_squiggle(cursor, id):
+    # Execute the SELECT query to fetch the row from the 'squiggles' table with the matching ID
+    cursor.execute("SELECT id, datetime, author FROM squiggles WHERE id = %s;", (id,))
+
+    # Fetch the row returned by the query
+    row = cursor.fetchone()
+
+    return row
+
 def read_queue_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_printed of FALSE
     cursor.execute("SELECT * FROM squiggles;")

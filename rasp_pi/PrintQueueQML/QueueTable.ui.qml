@@ -11,6 +11,52 @@ Rectangle {
     property alias selectedRow: tableView.currentRow
     signal rowChanged(int row)
     
+    // Formatting for each column in the table
+    Component {
+        id: datetimeDelegate
+
+        Text {
+            text: styleData.value
+            color: "black"
+            padding: 4
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Component {
+        id: authorDelegate
+
+        Text {
+            text: styleData.value
+            color: "black"
+            padding: 4
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Component {
+        id: titleDelegate
+
+        Text {
+            text: styleData.value
+            color: "black"
+            padding: 4
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Component {
+        id: statusDelegate
+
+        Text {
+            text: styleData.value
+            color: "black"
+            padding: 4
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+
     TableView {
         id: tableView
         anchors.fill: parent
@@ -47,18 +93,36 @@ Rectangle {
         // }
 
         TableViewColumn {
-            title: "ID"
-            role: "id"
-            width: 100
+            title: "Timestamp"
+            role: "datetime"
+            width: datetimeDelegate.implicitWidth + 8
+            delegate: datetimeDelegate
         }
+
         TableViewColumn {
             title: "Name"
-            role: "datetime"
-            width: 200
+            role: "author"
+            width: authorDelegate.implicitWidth + 8
+            delegate: authorDelegate
+        }
+
+        TableViewColumn {
+            title: "Title"
+            role: "title"
+            width: titleDelegate.implicitWidth + 8
+            delegate: titleDelegate
+        }
+
+        TableViewColumn {
+            title: "Printed"
+            role: "axi_printed"
+            width: statusDelegate.implicitWidth + 8
+            delegate: statusDelegate
         }
 
         onCurrentRowChanged: {
-            rowChanged(tableView.currentRow)
+            var selectedId = tableView.model.get(tableView.currentRow).id
+            rowChanged(selectedId)
         }
     }
 }
