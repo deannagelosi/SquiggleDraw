@@ -62,7 +62,7 @@ class Controller(QObject):
         self.setup_screen()
 
         # Setup ui variables
-        self.current_id
+        self.current_id = 1
 
         # Fetch DB data and update
 
