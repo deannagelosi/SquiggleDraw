@@ -116,6 +116,10 @@ class Controller(QObject):
 
             # print(selected_row)
             print_receipt(selected_row)
+
+            # Print done, switch play/stop buttons back
+            play_button.setProperty("state", "state_ready")
+            stop_button.setProperty("state", "state_unavailable")
             
             # Call to print thermal receipt
             # print(f"Print the squiggle on row {self.current_row}")
