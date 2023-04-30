@@ -124,16 +124,9 @@ class Controller(QObject):
             print(self.axi)
             print("svg data: ")
             print(selected_row["svg_data"])
-            
+
             plot_svg(self.axi, selected_row["svg_data"])
             print_receipt(self.thermal, selected_row)
-
-            # Print done, switch play/stop buttons back
-            play_button.setProperty("state", "state_ready")
-            stop_button.setProperty("state", "state_unavailable")
-            
-            # Call to print thermal receipt
-            # print(f"Print the squiggle on row {self.current_row}")
 
     def press_stop(self):
         # find button
