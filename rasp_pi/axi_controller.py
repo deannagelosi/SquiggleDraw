@@ -19,6 +19,8 @@ def stop_plot(axi):
     # axi.options.mode = "manual"
     # axi.options.manual_cmd = "disable_xy"
     axi.plot_run()
+
+    axi.moveto(0, 0)
     disable_motors(axi)
 
     # ad.plot_setup("file.svg")
