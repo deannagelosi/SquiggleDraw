@@ -16,6 +16,8 @@ def plot_svg(axi, svg_string):
 def stop_plot(axi):
     axi.plot_setup()
     axi.plot_run()
+
+    axi.moveto(0, 0)
     disable_motors(axi)
 
 def disable_motors(axi):
