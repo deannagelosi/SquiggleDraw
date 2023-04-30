@@ -142,6 +142,10 @@ def get_data():
 
     # Convert the list of tuples into a list of dictionaries
     result = [dict(zip(column_names, row)) for row in rows]
+
+    for row in result:
+        row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
+
     print("result: ")
     print(result)
     return result
