@@ -15,7 +15,7 @@ def plot_svg(axi, svg_string):
 def stop_plot(axi):
     # pause print, clear svg from setup
     axi.options.mode = "manual"
-    axi.plot_setup()
+    # axi.plot_setup()
     axi.plot_run()
 
     # return home and disable motors
