@@ -77,7 +77,7 @@ def test_print(printer):
     # image for turns
     printer.justify('C')
     printer.printImage(Image.open('img/loop.png'), True)
-    printer.feed(1)
+    printer.feed(2)
 
     # compression
     printer.justify('C')
