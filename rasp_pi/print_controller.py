@@ -16,24 +16,6 @@ def setup_printer():
 
     return printer
 
-def print_receipt(printer, data):
-    # print receipt
-    printer.feed(3)
-    printer.print(data["datetime"])
-    printer.print(data["author"])
-    printer.feed(5)
-
-    # update database to mark printed
-    row_id = data["id"]
-    print(f"mark printed: {row_id}")
-
-    cursor, db = db_connect()
-    set_printed(cursor, row_id)
-    # Commit the transaction
-    db.commit()
-    cursor.close()
-    db.close()
-
 # def print_image(printer):
 #     printer.feed(1)
 #     # Print the test squiggle
@@ -42,7 +24,9 @@ def print_receipt(printer, data):
 
     # printer.sleep()      # Tell printer to sleep
 
-def test_print(printer):
+def print_receipt(printer, data):
+    # title, author, parameters: length, curl, compress, datetime
+
     # title
     printer.justify('C')
     printer.setSize('L')
@@ -52,17 +36,17 @@ def test_print(printer):
     printer.justify('L')
     printer.setSize('S')
     printer.feed(1)
-    printer.println("My First Squiggle")
+    printer.println(data["title"])
 
     # author
     printer.justify('L')
     printer.setSize('S')
-    printer.println("Deanna")
+    printer.println(data["author"])
 
     # length
     printer.justify('C')
     printer.setSize('L')
-    printer.println("41")
+    printer.println(data["length"])
 
     # image for length
     printer.justify('C')
@@ -72,7 +56,7 @@ def test_print(printer):
     # turns
     printer.justify('C')
     printer.setSize('L')
-    printer.println("31")
+    printer.println(data["turns"])
 
     # image for turns
     printer.justify('C')
@@ -82,25 +66,36 @@ def test_print(printer):
     # compression
     printer.justify('C')
     printer.setSize('L')
-    printer.println("78")
+    printer.println(data["compress"])
 
     # image for compression here
     printer.justify('C')
     printer.printImage(Image.open('img/compress.png'), True)
 
-    # # datetime
-    # printer.justify('L')
-    # printer.setSize('S')
-    # printer.println("datetime")
+    # datetime
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println(data["datetime"])
 
-    # # github url
-    # printer.justify('L')
-    # printer.setSize('S')
-    # printer.println("https://github.com/deannagelosi/SquiggleDraw")
+    # github url
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println("https://github.com/deannagelosi/SquiggleDraw")
 
     # # logo here
 
     printer.feed(6)
+
+    # update database to mark printed
+    row_id = data["id"]
+    # print(f"mark printed: {row_id}")
+
+    cursor, db = db_connect()
+    set_printed(cursor, row_id)
+    # Commit the transaction
+    db.commit()
+    cursor.close()
+    db.close()
 
 if __name__ == "__main__":
     main()
