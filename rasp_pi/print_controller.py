@@ -4,6 +4,7 @@ from datetime import datetime
 # import img.squiggle_seed234_384x259 as test_squiggle
 from db_controller import db_connect, read_receipt_data, set_printed
 import time
+from PIL import Image
 
 def main():
     printer = setup_printer()
@@ -50,6 +51,7 @@ def test_print(printer):
     # title
     printer.justify('L')
     printer.setSize('S')
+    printer.feed(1)
     printer.println("My First Squiggle")
 
     # author
@@ -62,7 +64,8 @@ def test_print(printer):
     printer.setSize('M')
     printer.println("41")
 
-    # image for length here
+    # image for length
+    printer.printImage(Image.open('img/length.png'), True)
 
     # turns
     printer.justify('C')
