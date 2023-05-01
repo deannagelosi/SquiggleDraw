@@ -48,7 +48,8 @@ def retrieve_squiggle(cursor, id):
 
 def read_queue_data(cursor):
     # Execute the SELECT query to fetch rows from the 'squiggles' table with a receipt_printed of FALSE
-    cursor.execute("SELECT * FROM squiggles;")
+    # cursor.execute("SELECT * FROM squiggles;")
+    cursor.execute("SELECT * FROM squiggles ORDER BY axi_printed DESC, datetime DESC;")
 
     # Fetch all the rows returned by the query
     rows = cursor.fetchall()
