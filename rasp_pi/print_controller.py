@@ -77,15 +77,16 @@ def test_print(printer):
     # image for turns
     printer.justify('C')
     printer.printImage(Image.open('img/loop.png'), True)
+    printer.feed(1)
 
-    # # compression
-    # printer.justify('C')
-    # printer.setSize('L')
-    # printer.println("78")
+    # compression
+    printer.justify('C')
+    printer.setSize('L')
+    printer.println("78")
 
-    # # image for compression here
-    # printer.justify('C')
-    # printer.printImage(Image.open('img/compress.png'), True)
+    # image for compression here
+    printer.justify('C')
+    printer.printImage(Image.open('img/compress.png'), True)
 
     # # datetime
     # printer.justify('L')
