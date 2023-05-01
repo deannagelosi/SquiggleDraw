@@ -1,10 +1,13 @@
 # source: https://github.com/adafruit/Python-Thermal-Printer/blob/master/printertest.py
-
 from lib.Adafruit_Thermal import *
 from datetime import datetime
 # import img.squiggle_seed234_384x259 as test_squiggle
 from db_controller import db_connect, read_receipt_data, set_printed
 import time
+
+def main():
+    printer = setup_printer()
+    test_print(printer)
 
 def setup_printer():
     # setup printer
@@ -37,6 +40,55 @@ def print_receipt(printer, data):
 #     printer.feed(2)
 
     # printer.sleep()      # Tell printer to sleep
+
+def test_print(printer):
+    # title
+    printer.justify('C')
+    printer.setSize('L')
+    printer.println("SquiggleDraw")
+
+    # title
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println("My First Squiggle")
+
+    # author
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println("Deanna")
+
+    # length
+    printer.justify('C')
+    printer.setSize('M')
+    printer.println("41")
+
+    # image for length here
+
+    # turns
+    printer.justify('C')
+    printer.setSize('M')
+    printer.println("31")
+
+    # image for turns here
+
+    # compression
+    printer.justify('C')
+    printer.setSize('M')
+    printer.println("78")
+
+    # image for compression here
+
+    # datetime
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println("datetime")
+
+    # github url
+    printer.justify('L')
+    printer.setSize('S')
+    printer.println("https://github.com/deannagelosi/SquiggleDraw")
+
+    # logo here
 
 if __name__ == "__main__":
     main()
