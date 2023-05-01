@@ -2,9 +2,9 @@ import sys, math
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import QTimer, QObject, pyqtSlot, pyqtSignal
-# from db_controller import db_connect, read_queue_data, set_plotted
-# from print_controller import setup_printer, print_receipt
-# from axi_controller import setup_plotter, plot_svg, stop_plot
+from db_controller import db_connect, read_queue_data, set_plotted
+from print_controller import setup_printer, print_receipt
+from axi_controller import setup_plotter, plot_svg, stop_plot
 import threading
 import json
 
@@ -31,8 +31,8 @@ class Controller(QObject):
         self.root_object = self.engine.rootObjects()[0]
 
         # Load class that provides db data to the UI table
-        # self.db_data = DataProvider()
-        # self.engine.rootContext().setContextProperty("dataProvider", self.db_data)
+        self.db_data = DataProvider()
+        self.engine.rootContext().setContextProperty("dataProvider", self.db_data)
 
         # Setup the UI interactivity
         self.setup_screen()
@@ -40,12 +40,10 @@ class Controller(QObject):
         # Setup ui variables
         self.current_id = 1
 
-        # Fetch DB data and update
-
-        # # Set up a QTimer to refresh the data every 5 seconds
-        # self.timer = QTimer()
-        # self.timer.timeout.connect(self.db_data.check_updates)
-        # self.timer.start(1500)  # Update every 5 seconds (5000 milliseconds)
+        # Set up a QTimer to refresh the data every 5 seconds
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.db_data.check_updates)
+        self.timer.start(1500)  # Update every 5 seconds (5000 milliseconds)
 
     def setup_screen(self):
         # Two kinds of configuration: Listeners and Properties
@@ -81,7 +79,6 @@ class Controller(QObject):
     
     def press_play(self):
         # find button
-        stop_button = self.get_object("stop_button")
         play_button = self.get_object("play_button")
 
         # press button
@@ -102,7 +99,7 @@ class Controller(QObject):
         play_button = self.get_object("play_button")
         play_button.setProperty("state", "state_ready")
         # Stop axi plotting
-        # stop_plot(self.axi)
+        stop_plot(self.axi)
 
     def which_row(self, selected_id):
         # test selecting the current row
