@@ -22,8 +22,8 @@ def main():
                 {key: value for key, value in d.items() if key != "new_squiggle"}
                 for d in data
             ]
-            print("GET result:")
-            print(result)
+            # print("GET result:")
+            # print(result)
         else:
             result = []
 
