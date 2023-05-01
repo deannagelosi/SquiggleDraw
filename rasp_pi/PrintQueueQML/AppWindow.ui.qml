@@ -65,6 +65,15 @@ ApplicationWindow {
         height: 352
         tableModel: dataProvider.get_data()
     }
+
+    Exit {
+        id: exit_button
+        objectName: "exit_button"
+        x: 765
+        y: 10
+        width: 25
+        height: 25
+    }
 }
 
 /*##^##

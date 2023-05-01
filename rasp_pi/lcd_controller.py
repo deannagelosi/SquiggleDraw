@@ -12,14 +12,15 @@ def main():
     # Launch the UI
     app = QApplication(sys.argv)
     # Create an instance of the controller and add it to the QML context
-    controller = Controller();
+    controller = Controller(app);
 
     # Execute application and wait for exit
     sys.exit(app.exec())
 
 class Controller(QObject):
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
+        self.app = app
         # Setup hardware
         self.thermal = setup_printer()
         self.axi = setup_plotter()
@@ -64,6 +65,10 @@ class Controller(QObject):
         # Setup the table
         queue_table = self.get_object("queue_table")
         queue_table.rowChanged.connect(self.which_row)
+
+        # Exit button listener
+        exit_button = self.get_object("exit_button")
+        exit_button.clicked.connect(self.app.quit)
 
     def get_object(self, object_name):
         # Search for specific components by objectName
