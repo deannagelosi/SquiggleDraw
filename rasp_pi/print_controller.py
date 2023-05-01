@@ -61,25 +61,30 @@ def test_print(printer):
 
     # length
     printer.justify('C')
-    printer.setSize('M')
+    printer.setSize('L')
     printer.println("41")
 
     # image for length
+    printer.justify('C')
     printer.printImage(Image.open('img/length.png'), True)
 
     # turns
     printer.justify('C')
-    printer.setSize('M')
+    printer.setSize('L')
     printer.println("31")
 
-    # image for turns here
+    # image for turns
+    printer.justify('C')
+    printer.printImage(Image.open('img/loop.png'), True)
 
     # compression
     printer.justify('C')
-    printer.setSize('M')
+    printer.setSize('L')
     printer.println("78")
 
     # image for compression here
+    printer.justify('C')
+    printer.printImage(Image.open('img/compress.png'), True)
 
     # datetime
     printer.justify('L')
@@ -92,6 +97,8 @@ def test_print(printer):
     printer.println("https://github.com/deannagelosi/SquiggleDraw")
 
     # logo here
+
+    printer.feed(6)
 
 if __name__ == "__main__":
     main()
