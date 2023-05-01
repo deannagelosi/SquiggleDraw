@@ -68,35 +68,35 @@ def test_print(printer):
     printer.justify('C')
     printer.printImage(Image.open('img/length.png'), True)
 
-    # turns
-    printer.justify('C')
-    printer.setSize('L')
-    printer.println("31")
+    # # turns
+    # printer.justify('C')
+    # printer.setSize('L')
+    # printer.println("31")
 
-    # image for turns
-    printer.justify('C')
-    printer.printImage(Image.open('img/loop.png'), True)
+    # # image for turns
+    # printer.justify('C')
+    # printer.printImage(Image.open('img/loop.png'), True)
 
-    # compression
-    printer.justify('C')
-    printer.setSize('L')
-    printer.println("78")
+    # # compression
+    # printer.justify('C')
+    # printer.setSize('L')
+    # printer.println("78")
 
-    # image for compression here
-    printer.justify('C')
-    printer.printImage(Image.open('img/compress.png'), True)
+    # # image for compression here
+    # printer.justify('C')
+    # printer.printImage(Image.open('img/compress.png'), True)
 
-    # datetime
-    printer.justify('L')
-    printer.setSize('S')
-    printer.println("datetime")
+    # # datetime
+    # printer.justify('L')
+    # printer.setSize('S')
+    # printer.println("datetime")
 
-    # github url
-    printer.justify('L')
-    printer.setSize('S')
-    printer.println("https://github.com/deannagelosi/SquiggleDraw")
+    # # github url
+    # printer.justify('L')
+    # printer.setSize('S')
+    # printer.println("https://github.com/deannagelosi/SquiggleDraw")
 
-    # logo here
+    # # logo here
 
     printer.feed(6)
 
