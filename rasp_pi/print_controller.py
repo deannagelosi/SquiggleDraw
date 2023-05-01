@@ -71,11 +71,13 @@ def print_receipt(printer, data):
     # image for compression here
     printer.justify('C')
     printer.printImage(Image.open('img/compress.png'), True)
+    printer.feed(2)
 
     # datetime
     printer.justify('L')
     printer.setSize('S')
     printer.println(data["datetime"])
+    printer.feed(1)
 
     # github url
     printer.justify('L')
