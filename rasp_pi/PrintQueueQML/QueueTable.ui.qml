@@ -43,21 +43,20 @@ Rectangle {
         TableViewColumn {
             title: "Timestamp"
             role: "datetime"
-            width: 200
+            width: 175
         }
 
         TableViewColumn {
             title: "Name"
             role: "author"
-            width: 100
+            width: 175
         }
 
-        // TableViewColumn {
-        //     title: "Title"
-        //     role: "title"
-        //     width: titleDelegate.implicitWidth + 8
-        //     delegate: titleDelegate
-        // }
+        TableViewColumn {
+            title: "Title"
+            role: "title"
+            width: 120
+        }
 
         TableViewColumn {
             title: "Printed"

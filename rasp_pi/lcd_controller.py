@@ -6,6 +6,7 @@ from db_controller import db_connect, read_queue_data, set_plotted
 from print_controller import setup_printer, print_receipt
 from axi_controller import setup_plotter, plot_svg, stop_plot
 import threading
+import json
 
 def main(): 
     # Launch the UI
@@ -145,6 +146,10 @@ class DataProvider(QObject):
         # Convert the list of tuples into a list of dictionaries
         result = [dict(zip(column_names, row)) for row in rows]
         for row in result:
+            params_string = row["squiggle_params"]
+            params_dict = json.loads(params_string)
+            row["title"] = params_dict["title"]
+
             row["datetime"] = row["datetime"].strftime("%-m/%-d/%y %-I:%M:%S %p")
 
             if row["axi_printed"] == None:
