@@ -20,7 +20,7 @@ def plot_svg(axi, svg_string):
     svg_root = etree.fromstring(svg_string.encode('utf-8'))
     width = float(svg_root.get('width'))
     height = float(svg_root.get('height'))
-    print(f"w: ${width}, h ${height}")
+    print(f"w: {width}, h {height}")
 
     # Calculate the scale factors and center
     new_width = 100
@@ -37,8 +37,7 @@ def plot_svg(axi, svg_string):
 
     # Transform the SVG path
     path = parse_path(path_data)
-    transformed_path = path.scaled(
-        scale_x, scale_y).translated(translate_x, translate_y)
+    transformed_path = path.scaled(scale_x, scale_y).translated(translate_x, translate_y)
     path_element.set("d", transformed_path.d())
 
     # Convert the modified SVG root back to a string
@@ -47,6 +46,7 @@ def plot_svg(axi, svg_string):
     # Send the transformed SVG string to the AxiDraw
     axi.plot_setup(transformed_svg_string)
     axi.plot_run()
+
 
 # def plot_svg(axi, svg_string):
 #     axi.penup()
