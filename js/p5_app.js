@@ -37,6 +37,8 @@ let circlePressInterval;
 let lengthSlider, lengthInput;
 let turnSlider, turnInput;
 let compressSlider, compressInput;
+let headerHeight = 60;
+let footerHeight = 200;
 
 function setup() {
     setupHeader();
@@ -45,11 +47,41 @@ function setup() {
 }
 
 function setupHeader() {
-
-}
+    const header = select('#header');;
+    header.addClass('header');
+    header.style('height', `${headerHeight}px`);
+  
+    // Create and set up the reset button
+    const resetButton = createButton('Reset');
+    resetButton.addClass('reset-button');
+    resetButton.mousePressed(() => {
+      lengthInput.value(50);
+      turnInput.value(50);
+      compressInput.value(50);
+    //   handleValueChange(lengthInput, lengthCircle, lengthColors);
+    //   handleValueChange(turnInput, turnCircle, turnColors);
+    //   handleValueChange(compressInput, compressCircle, compressColors);
+    });
+  
+    // Create and set up the share button
+    const shareButton = createButton('Share');
+    shareButton.addClass('share-button');
+  
+    // Create the title
+    const title = createElement('h1', 'SquiggleDraw');
+    title.addClass('header-title');
+  
+    // Add elements to the header
+    header.child(resetButton);
+    header.child(title);
+    header.child(shareButton);
+  
+    // Add the header to the body
+    document.body.prepend(header.elt);
+  }  
 
 function setupSquiggle() {
-    const canvas = createCanvas(windowWidth, windowHeight - 200); // Adjust canvas height to exclude footer
+    const canvas = createCanvas(windowWidth, windowHeight - footerHeight - headerHeight); // Adjust canvas height to exclude footer
     canvas.parent('canvas-container');
     // Create an off-screen renderer for the SVG output
     offScreenRenderer = createGraphics(width, height, SVG);
@@ -93,6 +125,8 @@ function setupFooter() {
 
     // Add UI controls to the footer
     const footer = select('#footer');
+    footer.addClass('footer');
+    footer.style('height', `${footerHeight}px`);
     const controlsContainer = createElement('div').addClass('controls-container');
     controlsContainer.child(createControlGroup(lengthInput, lengthCircle));
     controlsContainer.child(createControlGroup(turnInput, turnCircle));
@@ -323,7 +357,7 @@ function createCircle(label, color) {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight - 200);
+    resizeCanvas(windowWidth, windowHeight - footerHeight - headerHeight);
 }
 
 // API POST
