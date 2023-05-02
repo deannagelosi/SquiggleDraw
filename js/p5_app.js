@@ -330,14 +330,18 @@ function updateColor(circle, value, colors) {
 }
 
 function draw() {
-    background(255);
-
     squigglePoints = generateSquigglePoints();
     drawSquiggle(squigglePoints, this);
     drawSquiggle(squigglePoints, offScreenRenderer);
+
     // Get the SVG data as a string
     svgData = offScreenRenderer.elt.svg.outerHTML;
-    // console.log(svgData);
+    // Remove the background rect from the SVG data
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgData, "image/svg+xml");
+    const backgroundRect = svgDoc.querySelector("rect");
+    backgroundRect.remove();
+    svgData = svgDoc.documentElement.outerHTML;
 
     noLoop();
 }
@@ -413,6 +417,8 @@ function generateSquigglePoints() {
 }
 
 function drawSquiggle(points, renderer) {
+    renderer.background(255);
+
     if (showField) {
         showPerlinField();
     }
