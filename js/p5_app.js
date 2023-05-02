@@ -98,7 +98,7 @@ function appendShare(header) {
         console.log("already added");
         return;
     }
-    
+
     // resize the header into spacer
     headerHeight = headerH + spacerH;
     spacerHeight = 0;
@@ -131,15 +131,25 @@ function appendShare(header) {
     // Create the print button
     const printButton = createButton('Print');
     printButton.addClass('print-button');
+    printButton.mouseClicked(() => {
+        sendData();
+    });
 
     // Create the input boxes
     const titleInput = createInput('');
     titleInput.attribute('placeholder', 'Title');
     titleInput.addClass('input-box');
-
+    console.log(titleInput.value());
+    titleInput.input(() => {
+        title = titleInput.value();
+    });
+    
     const authorInput = createInput('');
     authorInput.attribute('placeholder', 'Author');
     authorInput.addClass('input-box');
+    authorInput.input(() => {
+        author = authorInput.value();
+    });
 
     // wrap input boxes in container
     const inputContainer = createElement('div');
@@ -167,9 +177,6 @@ function setupSquiggle() {
     turnRadius.selected = (turnRadius.min + turnRadius.max) / 2;
     length.selected = (length.min + length.max) / 2;
     pDistance.selected = [(pDistance.min[0] + pDistance.max[0]) / 2, (pDistance.min[1] + pDistance.max[1]) / 2];
-
-    author = "Unknown";
-    title = "Untitled";
 
     // squiggle setup
     centerX = width / 2;
@@ -440,10 +447,15 @@ function windowResized() {
 
 // API POST
 async function sendData() {
-
     const urlParams = new URLSearchParams(window.location.search);
     const inviteKeyParam = urlParams.get("inviteKey");
-    // const author = document.getElementById("author").value;
+
+    if (!title) {
+        title = "Untitled"
+    }
+    if (!author) {
+        author = "Unknown"
+    }
 
     const request = {
         inviteKey: inviteKeyParam,
@@ -453,9 +465,9 @@ async function sendData() {
             svgData: svgData,
             squiggleParams: JSON.stringify({
                 title: title,
-                length: length.selected,
-                turn: turnRadius.selected,
-                pDistance: pDistance.selected
+                length: lengthInput.value(),
+                turn: turnInput.value(),
+                pDistance: compressInput.value()
             })
         },
     };
