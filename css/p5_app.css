@@ -32,14 +32,6 @@ body {
   position: relative;
 }
 
-.slider-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 80%;
-  margin-bottom: 10px;
-}
-
 .input-field {
   margin-bottom: 10px;
   width: 80px;
@@ -57,4 +49,19 @@ body {
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.controls-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
 }

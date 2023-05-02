@@ -84,12 +84,53 @@ function setupFooter() {
 
     // Add UI controls to the footer
     const footer = select('#footer');
-    footer.child(lengthInput);
-    footer.child(lengthCircle);
-    footer.child(turnInput);
-    footer.child(turnCircle);
-    footer.child(compressInput);
-    footer.child(compressCircle);
+    const controlsContainer = createElement('div').addClass('controls-container');
+    controlsContainer.child(createControlGroup(lengthInput, lengthCircle));
+    controlsContainer.child(createControlGroup(turnInput, turnCircle));
+    controlsContainer.child(createControlGroup(compressInput, compressCircle));
+    footer.child(controlsContainer);
+}
+
+function createControlGroup(inputBox, circleButton) {
+    const controlGroup = createElement('div').addClass('control-group');
+    controlGroup.child(inputBox);
+    controlGroup.child(circleButton);
+    return controlGroup;
+}
+
+function updateLengthValue() {
+    updateValue(lengthInput, lengthCircle, color(255, 0, 0), color(255, 165, 0));
+}
+
+function updateTurnValue() {
+    updateValue(turnInput, turnCircle, color(0, 255, 0), color(0, 128, 0));
+}
+
+function updateCompressValue() {
+    updateValue(compressInput, compressCircle, color(0, 0, 255), color(75, 0, 130));
+}
+
+function updateValue(inputItem, circle, color1, color2) {
+    // Read the value for the inputItem's value
+    const value = parseInt(inputItem.value());
+    // change the number
+    inputItem.value((value === 100 ? 1 : value + 1).toString());
+    // change the color
+    const colorValue = map(value, 1, 100, 0, 1);
+    circle.style('background-color', lerpColor(color1, color2, colorValue));
+}
+
+function createCircleButton(label, color, updateFunction) {
+    const circle = createButton('');
+    circle.addClass('circle-button');
+    circle.style('background-color', color);
+    circle.mousePressed(() => {
+        intervalId = setInterval(updateFunction, 100);
+    });
+    circle.mouseReleased(() => {
+        clearInterval(intervalId);
+    });
+    return circle;
 }
 
 function draw() {
@@ -243,41 +284,6 @@ function createInputBox(value) {
     inputBox.addClass('input-field');
     return inputBox;
 }
-
-function createCircleButton(label, color, updateFunction) {
-    const circle = createButton('');
-    circle.addClass('circle-button');
-    circle.style('background-color', color);
-    circle.mousePressed(() => {
-        intervalId = setInterval(updateFunction, 100);
-    });
-    circle.mouseReleased(() => {
-        clearInterval(intervalId);
-    });
-    return circle;
-}
-
-function updateLengthValue() {
-    const value = parseInt(lengthInput.value());
-    lengthInput.value((value === 100 ? 1 : value + 1).toString());
-    const colorValue = map(value, 1, 100, 0, 255);
-    lengthCircle.style('background-color', color(255, 0, 0, colorValue));
-}
-
-function updateTurnValue() {
-    const value = parseInt(turnInput.value());
-    turnInput.value((value === 100 ? 1 : value + 1).toString());
-    const colorValue = map(value, 1, 100, 0, 255);
-    turnCircle.style('background-color', color(0, 255, 0, colorValue));
-}
-
-function updateCompressValue() {
-    const value = parseInt(compressInput.value());
-    compressInput.value((value === 100 ? 1 : value + 1).toString());
-    const colorValue = map(value, 1, 100, 0, 255);
-    compressCircle.style('background-color', color(0, 0, 255, colorValue));
-}
-
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
