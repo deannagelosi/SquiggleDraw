@@ -100,8 +100,8 @@ function setupHeader() {
 
 function appendShare(header) {
     // check if already appended
-    const shareContainer = select('.share-container');
-    if (shareContainer) {
+    const findContainer = select('.share-container');
+    if (findContainer) {
         // already added, don't add again
         return;
     }
@@ -114,31 +114,25 @@ function appendShare(header) {
     spacer.style('height', `${spacerHeight}px`);
 
     // create and append the share ui
-    const container = createElement('div');
-    container.addClass('share-container');
+    const shareContainer = createElement('div');
+    shareContainer.addClass('share-container');
 
     // Create the back button
     const backButton = createButton('Back');
     backButton.addClass('back-button');
 
-    function removeShare() {
-        container.remove();
-        headerHeight = headerH;
-        spacerHeight = spacerH;
-        header.style('height', `${headerHeight}px`);
-        spacer.style('height', `${spacerHeight}px`);
-    }
     backButton.mousePressed(() => {
-        removeShare();
+        removeShare(shareContainer, header, spacer);
     });
     backButton.touchEnded(() => {
-        removeShare();
+        removeShare(shareContainer, header, spacer);
     });
 
     // Create the print button
     const printButton = createButton('Print');
     printButton.addClass('print-button');
     printButton.mouseClicked(() => {
+        printButton.attribute('disabled', '');
         sendData();
     });
 
@@ -167,14 +161,20 @@ function appendShare(header) {
     inputContainer.child(authorInput);
 
     // Add elements to the container
-    container.child(backButton);
-    container.child(inputContainer);
-    container.child(printButton);
+    shareContainer.child(backButton);
+    shareContainer.child(inputContainer);
+    shareContainer.child(printButton);
 
     // Append the container to the header
-    header.child(container);
+    header.child(shareContainer);
+}
 
-    return container;
+function removeShare(container, header, spacer) {
+    container.remove();
+    headerHeight = headerH;
+    spacerHeight = spacerH;
+    header.style('height', `${headerHeight}px`);
+    spacer.style('height', `${spacerHeight}px`);
 }
 
 function setupSquiggle() {
@@ -501,9 +501,6 @@ function createCircle(label, colors) {
     // Load the SVG image and create an SVG element
     const svgImg = createSVG(svgPath);
     svgImg.addClass('svg-button-icon');
-    svgImg.style('width', '100%');
-    svgImg.style('height', '100%');
-    svgImg.style('margin', '15px');
     // svgImg.style('fill', '#f00');
     if (label == "Turn Radius") {
         svgImg.style('margin-bottom', '20px');
@@ -556,26 +553,34 @@ async function sendData() {
     console.log("Request:");
     console.log(requestBody);
 
-    const response = await fetch("https://4ko9ppstm2.execute-api.us-west-2.amazonaws.com/prod/squiggle/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: requestBody,
-    });
+    const printButton = select('.print-button');
+    try {
+        const response = await fetch("https://4ko9ppstm2.execute-api.us-west-2.amazonaws.com/prod/squiggle/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: requestBody,
+        });
 
-    if (response.ok) {
-        const jsonResponse = await response.json();
-        const responseBody = JSON.parse(jsonResponse.body);
-        console.log("Response:", responseBody.message);
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            const responseBody = JSON.parse(jsonResponse.body);
+            console.log("Response:", responseBody.message);
 
-        showMessage('Success: Squiggle sent!', true);
-    } else {
-        const jsonResponse = await response.json();
-        const responseBody = JSON.parse(jsonResponse.body);
-        console.log("Error:", responseBody.message);
+            showMessage('Squiggle sent!', true);
+            printButton.removeAttribute('disabled');
+        } else {
+            const jsonResponse = await response.json();
+            const responseBody = JSON.parse(jsonResponse.body);
+            console.log("Error:", responseBody.message);
 
-        showMessage(`Error: ${responseBody.message}`, false);
+            showMessage(`${responseBody.message}`, false);
+            printButton.removeAttribute('disabled');
+        }
+    } catch (error) {
+        console.error("Error:", error.message);
+        printButton.removeAttribute('disabled'); // Re-enable the print button on a failure
     }
 };
 
@@ -588,19 +593,20 @@ function showMessage(message, success) {
     } else {
         messageElem.addClass('error-message');
     }
-
-    // Replace the contents of input container for 3 seconds
+    // find needed elements
+    const header = select('#header');
+    const spacer = select('#spacer');
+    const shareContainer = select('.share-container');
     const inputContainer = select('.input-container');
     const titleInput = select('.title-input');
     const authorInput = select('.author-input');
 
+    // Replace the contents of input container for 3 seconds
     titleInput.hide();
     authorInput.hide();
     inputContainer.child(messageElem);
 
     setTimeout(() => {
-        messageElem.remove();
-        titleInput.show();
-        authorInput.show();
+        removeShare(shareContainer, header, spacer);
     }, 3000); // Remove the message after 3 seconds
 }
