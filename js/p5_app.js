@@ -31,7 +31,7 @@ let author;
 let title;
 
 // circle UI
-let intervalId;
+let circlePressInterval;
 
 // UI vars
 let lengthSlider, lengthInput;
@@ -78,9 +78,18 @@ function setupFooter() {
     compressInput = createInputBox(50);
 
     // Create and set up circles
-    lengthCircle = createCircleButton('Length', color(255, 0, 0), updateLengthValue);
-    turnCircle = createCircleButton('Turn Radius', color(0, 255, 0), updateTurnValue);
-    compressCircle = createCircleButton('Compression', color(0, 0, 255), updateCompressValue);
+    lengthCircle = createCircle('Length', color(255, 0, 0));
+    turnCircle = createCircle('Turn Radius', color(0, 255, 0));
+    compressCircle = createCircle('Compression', color(0, 0, 255));
+
+    lengthColors = [color(255, 0, 0), color(255, 165, 0)];
+    turnColors = [color(0, 255, 0), color(0, 128, 0)];
+    compressColors = [color(0, 0, 255), color(75, 0, 130)];
+
+    // handle circle and input box changes
+    handleValueChange(lengthInput, lengthCircle, lengthColors);
+    handleValueChange(turnInput, turnCircle, turnColors);
+    handleValueChange(compressInput, compressCircle, compressColors);
 
     // Add UI controls to the footer
     const footer = select('#footer');
@@ -98,61 +107,63 @@ function createControlGroup(inputBox, circleButton) {
     return controlGroup;
 }
 
-function updateLengthValue() {
-    updateValue(lengthInput, lengthCircle, color(255, 0, 0), color(255, 165, 0));
-}
+function handleValueChange(inputBox, circle, colors) {
+    // if input box changes
+    function inputUpdate() {
+        // read current value
+        let value = Math.floor(parseInt(inputBox.value()));
+        // limit out of bounds
+        if (value > 100) {
+            value = 100
+            inputBox.value(value.toString());
+        } else if (value < 1) {
+            value = 1
+            inputBox.value(value.toString());
+        } else if (inputBox.value() === '') {
+            // leave empty in ui if empty
+            value = 1
+        }
+        // update circle color 
+        const colorValue = map(value, 1, 100, 0, 1);
+        circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
+    };
+    // listen for input changes
+    inputBox.input(inputUpdate);
 
-function updateTurnValue() {
-    updateValue(turnInput, turnCircle, color(0, 255, 0), color(0, 128, 0));
-}
-
-function updateCompressValue() {
-    updateValue(compressInput, compressCircle, color(0, 0, 255), color(75, 0, 130));
-}
-
-function updateValue(input, circle, color1, color2) {
-    // Read the value for the input's value
-    let value = parseInt(input.value());
-    // change the number
-    if (value >= 100) {
-        input.attribute('data-i', '-1');
-    } else if (value <= 1) {
-        input.attribute('data-i', '1');
+    // if circle is pressed
+    function circleUpdate() {
+        // read current value
+        let value = Math.floor(parseInt(inputBox.value()));
+        // increment up or down
+        let i = parseInt(inputBox.attribute('data-i'));
+        if (value >= 100) {
+            i = -1
+        } else if (value <= 1) {
+            i = 1
+        }
+        inputBox.attribute('data-i', i.toString());
+        // update value
+        value = value + i;
+        inputBox.value(value.toString());
+        // update circle color
+        const colorValue = map(value, 1, 100, 0, 1);
+        circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
     }
-
-    const incrementor = parseInt(input.attribute('data-i'));
-    value = value + incrementor;
-    input.value((value).toString());
-    // change the color
-    const colorValue = map(value, 1, 100, 0, 1);
-    circle.style('background-color', lerpColor(color1, color2, colorValue));
-}
-
-function createCircleButton(label, color, updateFunction) {
-    const circle = createButton('');
-    circle.addClass('circle-button');
-    circle.style('background-color', color);
-
-    const startEvent = () => {
-        clearInterval(intervalId);
-        intervalId = setInterval(updateFunction, 100);
+    // listen for mouse or touch on circle
+    const startUpdate = () => {
+        clearInterval(circlePressInterval);
+        circlePressInterval = setInterval(circleUpdate, 100);
     };
-
-    const endEvent = () => {
-        clearInterval(intervalId);
+    const endUpdate = () => {
+        clearInterval(circlePressInterval);
     };
-
-    circle.mousePressed(startEvent);
-    circle.mouseReleased(endEvent);
-    circle.touchStarted(startEvent);
-    circle.touchEnded(endEvent);
-
-    return circle;
+    circle.mousePressed(startUpdate);
+    circle.mouseReleased(endUpdate);
+    circle.touchStarted(startUpdate);
+    circle.touchEnded(endUpdate);
 }
 
 function draw() {
-    // background(220);
-
     squigglePoints = generateSquigglePoints();
     drawSquiggle(squigglePoints, this);
     drawSquiggle(squigglePoints, offScreenRenderer);
@@ -286,7 +297,7 @@ class Point {
     }
 }
 
-// UI functions
+// UI create functions
 function createLabel(name) {
     const label = createElement('span', name);
     label.style('margin-right', '10px');
@@ -303,8 +314,16 @@ function createInputBox(value) {
     return inputBox;
 }
 
+function createCircle(label, color) {
+    const circle = createButton('');
+    circle.addClass('circle-button');
+    circle.style('background-color', color);
+
+    return circle;
+}
+
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
+    resizeCanvas(windowWidth, windowHeight - 200);
 }
 
 // API POST
