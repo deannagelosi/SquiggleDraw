@@ -20,16 +20,13 @@ Fig.1 - A workflow of SquiggleDraw, starting with 1) the movible UI, 2) the AxiD
 </p>
 
 ## Features
+<img align="right" src="img/params-demo.gif" width=40% padding-right = 100px><p align = "center">
 
 SquiggleDraw is an AWS Amplify app that creates generative scribble drawings based on three parameters:
 
 1. Line length
 2. Turn radius: ranges between 1/4 $\pi$ and $\pi$
 3. Compression: the space between points that make up a line
-
-<img align="center" src="img/params-demo.gif" width=75%><p align = "center"><p align = "center">
-Fig.2 - Demo of squiggle parameter buttons. The left button controls line length, middle controls turn radius and right controls compression. 
-</p>
 
 The app connects to a AWS Dyanmo DB which stores the parameters and other user defined values (title and author) and sends it to a queue. The queue is hosted on a Raspberry Pi and allows for job selection.
 
