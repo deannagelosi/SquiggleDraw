@@ -469,7 +469,39 @@ function createCircle(label, color) {
     circle.addClass('circle-button');
     circle.style('background-color', color);
 
+    // pick correct svg img path
+    let svgPath
+    switch (label) {
+        case "Length":
+            svgPath = '../img/length.svg';
+            break;
+        case "Turn Radius":
+            svgPath = '../img/loop.svg';
+            break;
+        case "Compression":
+            svgPath = '../img/compress.svg';
+            break;
+    }
+    // Load the SVG image and create an SVG element
+    const svgImg = createSVG(svgPath);
+    svgImg.style('width', '100%'); // Adjust the size as needed
+    svgImg.style('height', '100%'); // Adjust the size as needed
+    svgImg.style('margin', '15px');
+    // svgImg.style('fill', '#f00');
+    if (label == "Turn Radius") {
+        svgImg.style('margin-bottom', '20px');
+    }
+    circle.child(svgImg);
+
     return circle;
+}
+
+function createSVG(path) {
+    const svgElem = createElement('object');
+    svgElem.attribute('data', path);
+    svgElem.attribute('type', 'image/svg+xml');
+    svgElem.style('pointer-events', 'none');
+    return svgElem;
 }
 
 function windowResized() {
