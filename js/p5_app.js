@@ -110,11 +110,19 @@ function updateCompressValue() {
     updateValue(compressInput, compressCircle, color(0, 0, 255), color(75, 0, 130));
 }
 
-function updateValue(inputItem, circle, color1, color2) {
-    // Read the value for the inputItem's value
-    const value = parseInt(inputItem.value());
+function updateValue(input, circle, color1, color2) {
+    // Read the value for the input's value
+    let value = parseInt(input.value());
     // change the number
-    inputItem.value((value === 100 ? 1 : value + 1).toString());
+    if (value >= 100) {
+        input.attribute('data-i', '-1');
+    } else if (value <= 1) {
+        input.attribute('data-i', '1');
+    }
+
+    const incrementor = parseInt(input.attribute('data-i'));
+    value = value + incrementor;
+    input.value((value).toString());
     // change the color
     const colorValue = map(value, 1, 100, 0, 1);
     circle.style('background-color', lerpColor(color1, color2, colorValue));
@@ -124,12 +132,21 @@ function createCircleButton(label, color, updateFunction) {
     const circle = createButton('');
     circle.addClass('circle-button');
     circle.style('background-color', color);
-    circle.mousePressed(() => {
-        intervalId = setInterval(updateFunction, 100);
-    });
-    circle.mouseReleased(() => {
+
+    const startEvent = () => {
         clearInterval(intervalId);
-    });
+        intervalId = setInterval(updateFunction, 100);
+    };
+
+    const endEvent = () => {
+        clearInterval(intervalId);
+    };
+
+    circle.mousePressed(startEvent);
+    circle.mouseReleased(endEvent);
+    circle.touchStarted(startEvent);
+    circle.touchEnded(endEvent);
+
     return circle;
 }
 
@@ -281,6 +298,7 @@ function createInputBox(value) {
     inputBox.attribute('type', 'number');
     inputBox.attribute('min', '1');
     inputBox.attribute('max', '100');
+    inputBox.attribute('data-i', '1');
     inputBox.addClass('input-field');
     return inputBox;
 }
