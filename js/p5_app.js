@@ -5,8 +5,6 @@
 // todo: 
 // - show error message on ui if missing or incorrect invite key
 // - show success or fail messages on ui for sent squiggles
-// - dont let user type a value into the input box that exceed/is less than the slider range
-
 
 // User Parameters
 // length = pixel distance
