@@ -1,15 +1,13 @@
 from pyaxidraw import axidraw
 from lxml import etree
 from svgpathtools import parse_path
-# from svgpathtools.parser import parse_attrib
-
 
 
 def setup_plotter():
     # setup axidraw
     axi = axidraw.AxiDraw()
     axi.plot_setup()
-    axi.options.model = 1
+    # axi.options.model = 1
 
     return axi
 
@@ -30,8 +28,8 @@ def plot_svg(axi, svg_string):
     new_height = ratio * new_width
     scale_x = new_width / width
     scale_y = new_height / height
-    translate_x = (new_width - width * scale_x) / 2
-    translate_y = (new_height - height * scale_y) / 2
+    # translate_x = (new_width - width * scale_x) / 2
+    # translate_y = (new_height - height * scale_y) / 2
 
     # Extract the path element from the SVG string
     path_element = svg_root.find(".//{http://www.w3.org/2000/svg}path")
@@ -39,9 +37,10 @@ def plot_svg(axi, svg_string):
 
     # Transform the SVG path
     path = parse_path(path_data)
-    transformed_path = path.scaled(scale_x, scale_y) #.translated(translate_x, translate_y)
+    # .translated(translate_x, translate_y)
+    path = path.scaled(scale_x, scale_y)
 
-    path_element.set("d", transformed_path.d())
+    path_element.set("d", path.d())
 
     # Convert the modified SVG root back to a string
     transformed_svg_string = etree.tostring(svg_root, encoding='unicode')
