@@ -17,7 +17,7 @@ let turnRadius = { min: 0.25, max: 0.875, selected: null };
 let pDistance = { min: [10, 50], max: [20, 200], selected: [null, null] };
 
 // squiggle vars
-let scale;
+let zScale;
 let bigThreshold;
 let squiggleLength;
 let centerX, centerY;
@@ -34,9 +34,9 @@ let title;
 let circlePressInterval;
 
 // UI vars
-let lengthSlider, lengthInput;
-let turnSlider, turnInput;
-let compressSlider, compressInput;
+let lengthCircle, lengthInput, lengthColors;
+let turnCircle, turnInput, turnColors;
+let compressCircle, compressInput, compressColors;
 const headerH = 60
 const spacerH = 90
 const footerH = 200;
@@ -61,9 +61,18 @@ function setupHeader() {
     const resetButton = createButton('Reset');
     resetButton.addClass('reset-button');
     resetButton.mousePressed(() => {
+        // Reset the squiggle
+        // clear pressed
+        clearInterval(circlePressInterval);
+        // reset input and circles to default
         lengthInput.value(50);
         turnInput.value(50);
         compressInput.value(50);
+        updateColor(lengthCircle, 50, lengthColors)
+        updateColor(turnCircle, 50, turnColors)
+        updateColor(compressCircle, 50, compressColors)
+        // update squiggle drawing
+        updateSquiggle();
     });
 
     // Create and set up the share button
@@ -95,7 +104,7 @@ function appendShare(header) {
     // check if already appended
     const shareContainer = select('.share-container');
     if (shareContainer) {
-        console.log("already added");
+        // already added, don't add again
         return;
     }
 
@@ -182,7 +191,7 @@ function setupSquiggle() {
     centerX = width / 2;
     centerY = height / 2;
     buffer = 35; // boarder margin in pixels
-    scale = 100.0; // zoom level on Perlin noise field
+    zScale = 100.0; // zoom level on Perlin noise field
     bigThreshold = 0.80; // Higher percent, more loops
     seed = 1; // increment on each attempt
     showField = false;
@@ -226,31 +235,6 @@ function createControlGroup(inputBox, circleButton) {
     return controlGroup;
 }
 
-function updateSquiggle() {
-    // Update Length
-    lengthValue = lengthInput.value();
-    let newLength = remap(lengthValue, 0, 100, length.min, length.max)
-    length.selected = newLength;
-
-    // Update Turn
-    turnValue = turnInput.value();
-    let piMod = remap(turnValue, 0, 100, turnRadius.min, turnRadius.max);
-    turnRadius.selected = piMod;
-    seed = 1; // search from beginning
-
-
-    // Update Compress
-    compressValue = compressInput.value();
-    let newMin = remap(compressValue, 0, 100, pDistance.min[0], pDistance.max[0]);
-    let newMax = remap(compressValue, 0, 100, pDistance.min[1], pDistance.max[1]);
-    let newRange = [newMin, newMax];
-    pDistance.selected = newRange;
-    seed = 1; // search from beginning
-
-    // redraw squiggle with new params
-    loop();
-}
-
 function handleValueChange(inputBox, circle, colors) {
     // if input box changes
     function inputUpdate() {
@@ -268,8 +252,7 @@ function handleValueChange(inputBox, circle, colors) {
             value = 1
         }
         // update circle color 
-        const colorValue = map(value, 1, 100, 0, 1);
-        circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
+        updateColor(circle, value, colors)
 
         // update squiggle
         updateSquiggle();
@@ -293,8 +276,7 @@ function handleValueChange(inputBox, circle, colors) {
         value = value + i;
         inputBox.value(value.toString());
         // update circle color
-        const colorValue = map(value, 1, 100, 0, 1);
-        circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
+        updateColor(circle, value, colors)
 
         // update squiggle
         updateSquiggle();
@@ -311,6 +293,32 @@ function handleValueChange(inputBox, circle, colors) {
     circle.mouseReleased(endUpdate);
     circle.touchStarted(startUpdate);
     circle.touchEnded(endUpdate);
+}
+
+function updateSquiggle() {
+    // Update Length
+    lengthValue = lengthInput.value();
+    let newLength = remap(lengthValue, 0, 100, length.min, length.max)
+    length.selected = newLength;
+    // Update Turn
+    turnValue = turnInput.value();
+    let piMod = remap(turnValue, 0, 100, turnRadius.min, turnRadius.max);
+    turnRadius.selected = piMod;
+    seed = 1; // search from beginning
+    // Update Compress
+    compressValue = compressInput.value();
+    let newMin = remap(compressValue, 0, 100, pDistance.min[0], pDistance.max[0]);
+    let newMax = remap(compressValue, 0, 100, pDistance.min[1], pDistance.max[1]);
+    let newRange = [newMin, newMax];
+    pDistance.selected = newRange;
+    seed = 1; // search from beginning
+    // redraw squiggle with new params
+    loop();
+}
+
+function updateColor(circle, value, colors) {
+    const colorValue = map(value, 1, 100, 0, 1);
+    circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
 }
 
 function draw() {
@@ -342,7 +350,7 @@ function generateSquigglePoints() {
         // Loop until squiggle hits the user specified length
         squiggleLength = 0;
         while (squiggleLength < length.max) {
-            let pNoise = noise(px / scale, py / scale);
+            let pNoise = noise(px / zScale, py / zScale);
             let deltaAngle = map(pNoise, 0, 1, -TWO_PI, TWO_PI);
             let distance = map(pNoise, 0, 1, pDistance.selected[0], pDistance.selected[1]);
 
@@ -362,7 +370,7 @@ function generateSquigglePoints() {
                 if (checkBounds(px, py)) {
                     break;
                 } else {
-                    let newNoise = noise((px + (k * 10)) / scale, py / scale);
+                    let newNoise = noise((px + (k * 10)) / zScale, py / zScale);
                     let nudgeAngle = map(newNoise, 0, 1, PI / 32, PI);
                     angle = -1 * angle + nudgeAngle;
 
@@ -419,7 +427,7 @@ function showPerlinField() {
 
     for (let y = 0; y < height; y += 5) {
         for (let x = 0; x < width; x += 5) {
-            let nShading = noise(x / scale, y / scale);
+            let nShading = noise(x / zScale, y / zScale);
             let shading = map(nShading, 0, 1, 75, 255);
             fill(shading);
             rect(x, y, 5, 5);
