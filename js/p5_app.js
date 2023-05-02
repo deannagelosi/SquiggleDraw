@@ -209,9 +209,11 @@ function setupFooter() {
     compressInput = createInputBox(50);
 
     // Create and set up circles
-    lengthColors = [color(255, 0, 0), color(255, 165, 0)];
-    turnColors = [color(0, 255, 0), color(0, 128, 0)];
-    compressColors = [color(0, 0, 255), color(75, 0, 130)];
+    // lengthColors = [color(248, 108, 167), color(244, 212, 68)];
+    lengthColors = [color(252, 80, 110), color(244, 212, 68)];
+    // turnColors = [color(48, 197, 210), color(71, 16, 105)];
+    turnColors = [color(9, 101, 192), color(48, 197, 210)];
+    compressColors = [color(191, 15, 255), color(203, 255, 73)];
 
     lengthCircle = createCircle('Length', lengthColors);
     turnCircle = createCircle('Turn Radius', turnColors);
