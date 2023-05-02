@@ -13,7 +13,11 @@ def main():
     while True:
         # make API request
         response = get_request(config)
-        data = json.loads(response.json()["body"])
+
+        data;
+        response_json = response.json()
+        if "body" in response_json:
+            data = json.loads(response_json["body"])
 
         if data:
             print(f"Adding {len(data)} new squiggle(s).")
