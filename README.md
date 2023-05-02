@@ -12,7 +12,7 @@ Generate a scribble drawing on your phone and see a robot draw it live! Each dra
 
 **Development Environments**: VS Code, Figma, TablePlus
 
-**Reference** [Squiggle Generator](https://github.com/deannagelosi/squigglegenerator) Processing (Java) project
+**Reference**: [Squiggle Generator](https://github.com/deannagelosi/squigglegenerator) Processing (Java) project
 
 <img align="center" src="img/squiggledraw.png">
 <p align = "center">
@@ -24,7 +24,7 @@ Fig.1 - A workflow of SquiggleDraw, starting with 1) the movible UI, 2) the AxiD
 SquiggleDraw is an AWS Amplify app that creates generative scribble drawings based on three parameters:
 
 1. Line length
-2. Turn radius: ranges between 1/4$\pi$ and $\pi$
+2. Turn radius: ranges between 1/4 $\pi$ and $\pi$
 3. Compression: the space between points that make up a line 
 
 The app connects to a AWS Dyanmo DB which stores the parameters and other user defined values (title and author) and sends it to a queue. The queue is hosted on a Raspberry Pi and allows for job selection.
