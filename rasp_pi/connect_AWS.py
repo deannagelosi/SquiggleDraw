@@ -3,6 +3,7 @@ import json
 import time
 from db_controller import db_connect, insert_data
 
+
 def main():
     # Load API info
     with open('api_config.json', 'r') as file:
@@ -14,7 +15,7 @@ def main():
         # make API request
         response = get_request(config)
 
-        data;
+        data = None
         response_json = response.json()
         if "body" in response_json:
             data = json.loads(response_json["body"])
@@ -46,12 +47,14 @@ def main():
         # Wait for 2 seconds before looping again
         time.sleep(2)
 
+
 def get_request(config):
     # makes AWS API request using key and url
     headers = {'x-api-key': config['API_KEY']}
     response = requests.get(config['API_URL'], headers=headers)
 
     return response
+
 
 if __name__ == '__main__':
     main()
