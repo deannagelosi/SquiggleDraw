@@ -1,6 +1,6 @@
 from pyaxidraw import axidraw
 from lxml import etree
-from svgpathtools import svg2paths, wsvg
+from svgpathtools import parse_path
 
 
 def setup_plotter():
@@ -20,6 +20,7 @@ def plot_svg(axi, svg_string):
     svg_root = etree.fromstring(svg_string.encode('utf-8'))
     width = float(svg_root.get('width'))
     height = float(svg_root.get('height'))
+    print(f"w: ${width}, h ${height}")
 
     # Calculate the scale factors and center
     new_width = 100
@@ -30,22 +31,21 @@ def plot_svg(axi, svg_string):
     translate_x = (new_width - width * scale_x) / 2
     translate_y = (new_height - height * scale_y) / 2
 
-    # Transform the SVG paths
-    paths, _ = svg2paths(svg_string)
-    transformed_paths = []
-    for path in paths:
-        transformed_path = path.scaled(
-            scale_x, scale_y).translated(translate_x, translate_y)
-        transformed_paths.append(transformed_path)
+    # Extract the path element from the SVG string
+    path_element = svg_root.find(".//{http://www.w3.org/2000/svg}path")
+    path_data = path_element.get("d")
 
-    # Write the transformed paths to a new SVG string
-    wsvg(transformed_paths, filename=None,
-         string=True, svg_attributes=svg_root.attrib)
+    # Transform the SVG path
+    path = parse_path(path_data)
+    transformed_path = path.scaled(
+        scale_x, scale_y).translated(translate_x, translate_y)
+    path_element.set("d", transformed_path.d())
+
+    # Convert the modified SVG root back to a string
     transformed_svg_string = etree.tostring(svg_root, encoding='unicode')
+
     # Send the transformed SVG string to the AxiDraw
     axi.plot_setup(transformed_svg_string)
-    print("new svg:")
-    print(transformed_svg_string)
     axi.plot_run()
 
 # def plot_svg(axi, svg_string):
