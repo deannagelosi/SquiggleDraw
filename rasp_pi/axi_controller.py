@@ -1,7 +1,8 @@
 from pyaxidraw import axidraw
 from lxml import etree
-from svg.path import parse_path
-from svg.path.transform import scale, translate
+from svgpathtools import parse_path
+# from svgpathtools.parser import parse_attrib
+
 
 
 def setup_plotter():
@@ -38,8 +39,8 @@ def plot_svg(axi, svg_string):
 
     # Transform the SVG path
     path = parse_path(path_data)
-    scaled_path = scale(path, scale_x, scale_y)
-    transformed_path = translate(scaled_path, translate_x, translate_y)
+    transformed_path = path.scaled(scale_x, scale_y).translated(translate_x, translate_y)
+
     path_element.set("d", transformed_path.d())
 
     # Convert the modified SVG root back to a string
