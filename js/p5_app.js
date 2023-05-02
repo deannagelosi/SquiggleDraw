@@ -143,7 +143,7 @@ function appendShare(header) {
     titleInput.input(() => {
         title = titleInput.value();
     });
-    
+
     const authorInput = createInput('');
     authorInput.attribute('placeholder', 'Author');
     authorInput.addClass('input-box');
@@ -226,6 +226,31 @@ function createControlGroup(inputBox, circleButton) {
     return controlGroup;
 }
 
+function updateSquiggle() {
+    // Update Length
+    lengthValue = lengthInput.value();
+    let newLength = remap(lengthValue, 0, 100, length.min, length.max)
+    length.selected = newLength;
+
+    // Update Turn
+    turnValue = turnInput.value();
+    let piMod = remap(turnValue, 0, 100, turnRadius.min, turnRadius.max);
+    turnRadius.selected = piMod;
+    seed = 1; // search from beginning
+
+
+    // Update Compress
+    compressValue = compressInput.value();
+    let newMin = remap(compressValue, 0, 100, pDistance.min[0], pDistance.max[0]);
+    let newMax = remap(compressValue, 0, 100, pDistance.min[1], pDistance.max[1]);
+    let newRange = [newMin, newMax];
+    pDistance.selected = newRange;
+    seed = 1; // search from beginning
+
+    // redraw squiggle with new params
+    loop();
+}
+
 function handleValueChange(inputBox, circle, colors) {
     // if input box changes
     function inputUpdate() {
@@ -245,6 +270,9 @@ function handleValueChange(inputBox, circle, colors) {
         // update circle color 
         const colorValue = map(value, 1, 100, 0, 1);
         circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
+
+        // update squiggle
+        updateSquiggle();
     };
     // listen for input changes
     inputBox.input(inputUpdate);
@@ -267,6 +295,9 @@ function handleValueChange(inputBox, circle, colors) {
         // update circle color
         const colorValue = map(value, 1, 100, 0, 1);
         circle.style('background-color', lerpColor(colors[0], colors[1], colorValue));
+
+        // update squiggle
+        updateSquiggle();
     }
     // listen for mouse or touch on circle
     const startUpdate = () => {
