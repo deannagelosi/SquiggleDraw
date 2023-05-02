@@ -191,10 +191,10 @@ function setupSquiggle() {
     centerX = width / 2;
     centerY = height / 2;
     buffer = { // boarder margin in pixels
-        left: 30,
-        right: 30,
+        left: 20,
+        right: 20,
         top: 10,
-        bottom: 30
+        bottom: 20
     };
     zScale = 100.0; // zoom level on Perlin noise field
     bigThreshold = 0.80; // Higher percent, more loops

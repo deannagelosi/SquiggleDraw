@@ -20,13 +20,15 @@ def plot_svg(axi, svg_string):
     svg_root = etree.fromstring(svg_string.encode('utf-8'))
     width = float(svg_root.get('width'))
     height = float(svg_root.get('height'))
-    print(f"w: {width}, h {height}")
+    # print(f"w: {width}, h {height}")
 
     # Calculate the scale factors and center
     new_width = 400
     ratio = height / width
     new_height = ratio * new_width
-    print(f"new w: {new_width}, new h {new_height}")
+    # print(f"new w: {new_width}, new h {new_height}")
+    if new_height > 400:
+        new_height = 400
     scale_x = new_width / width
     scale_y = new_height / height
     # translate_x = (new_width - width * scale_x) / 2
