@@ -330,6 +330,8 @@ function updateColor(circle, value, colors) {
 }
 
 function draw() {
+    background(255);
+
     squigglePoints = generateSquigglePoints();
     drawSquiggle(squigglePoints, this);
     drawSquiggle(squigglePoints, offScreenRenderer);
@@ -411,8 +413,6 @@ function generateSquigglePoints() {
 }
 
 function drawSquiggle(points, renderer) {
-    renderer.background(255);
-
     if (showField) {
         showPerlinField();
     }
