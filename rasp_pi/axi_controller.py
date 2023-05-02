@@ -39,7 +39,7 @@ def plot_svg(axi, svg_string):
 
     # Transform the SVG path
     path = parse_path(path_data)
-    transformed_path = path.scaled(scale_x, scale_y).translated(translate_x, translate_y)
+    transformed_path = path.scaled(scale_x, scale_y) #.translated(translate_x, translate_y)
 
     path_element.set("d", transformed_path.d())
 
