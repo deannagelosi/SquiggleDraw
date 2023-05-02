@@ -89,7 +89,8 @@ class Controller(QObject):
             # Retrieve data for selected record
             selected_row = self.find_by_id(self.db_data.table_data, self.current_id)
 
-            # the axidraw and thermal printer block the UI. run in a thread instead                
+            # the axidraw and thermal printer block the UI. run in a thread instead
+            print(f"row id: {selected_row['id']}")            
             hw_thread = threading.Thread(target=self.print_and_plot, args=(selected_row,))
             # Start the thread
             hw_thread.start()
