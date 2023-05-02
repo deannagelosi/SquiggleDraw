@@ -20,7 +20,7 @@ Fig.1 - A workflow of SquiggleDraw, starting with 1) the movible UI, 2) the AxiD
 </p>
 
 ## Features
-<img align="right" src="img/params-demo.gif" width=40% padding-right = 100px><p align = "center">
+<img align="right" src="img/params-demo.gif" width=25% padding-right = 100px><p align = "center">
 
 SquiggleDraw is an AWS Amplify app that creates generative scribble drawings based on three parameters:
 
