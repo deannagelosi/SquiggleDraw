@@ -23,7 +23,7 @@ def plot_svg(axi, svg_string):
     print(f"w: {width}, h {height}")
 
     # Calculate the scale factors and center
-    new_width = 100
+    new_width = 400
     ratio = height / width
     new_height = ratio * new_width
     scale_x = new_width / width
