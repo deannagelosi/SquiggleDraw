@@ -496,8 +496,9 @@ function createCircle(label, colors) {
     }
     // Load the SVG image and create an SVG element
     const svgImg = createSVG(svgPath);
-    svgImg.style('width', '100%'); // Adjust the size as needed
-    svgImg.style('height', '100%'); // Adjust the size as needed
+    svgImg.addClass('svg-button-icon');
+    svgImg.style('width', '100%');
+    svgImg.style('height', '100%');
     svgImg.style('margin', '15px');
     // svgImg.style('fill', '#f00');
     if (label == "Turn Radius") {

@@ -112,7 +112,10 @@ body {
 }
 
 .circle-button {
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -124,6 +127,13 @@ body {
   outline: none;
   cursor: pointer;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.svg-button-icon {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 .controls-container {
