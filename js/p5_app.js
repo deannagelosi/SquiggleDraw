@@ -37,8 +37,11 @@ let circlePressInterval;
 let lengthSlider, lengthInput;
 let turnSlider, turnInput;
 let compressSlider, compressInput;
-let headerHeight = 60;
-let footerHeight = 200;
+const headerH = 60
+const spacerH = 90
+const footerH = 200;
+let headerHeight = headerH;
+let spacerHeight = spacerH;
 
 function setup() {
     setupHeader();
@@ -47,41 +50,116 @@ function setup() {
 }
 
 function setupHeader() {
-    const header = select('#header');;
+    const header = select('#header');
+    const spacer = select('#spacer');
     header.addClass('header');
+    // setup header and spacer height
     header.style('height', `${headerHeight}px`);
-  
+    spacer.style('height', `${spacerHeight}px`);
+
     // Create and set up the reset button
     const resetButton = createButton('Reset');
     resetButton.addClass('reset-button');
     resetButton.mousePressed(() => {
-      lengthInput.value(50);
-      turnInput.value(50);
-      compressInput.value(50);
-    //   handleValueChange(lengthInput, lengthCircle, lengthColors);
-    //   handleValueChange(turnInput, turnCircle, turnColors);
-    //   handleValueChange(compressInput, compressCircle, compressColors);
+        lengthInput.value(50);
+        turnInput.value(50);
+        compressInput.value(50);
     });
-  
+
     // Create and set up the share button
     const shareButton = createButton('Share');
     shareButton.addClass('share-button');
-  
+    shareButton.mousePressed(() => {
+        appendShare(header);
+    });
+    shareButton.touchEnded(() => {
+        appendShare(header);
+    });
+
     // Create the title
     const title = createElement('h1', 'SquiggleDraw');
     title.addClass('header-title');
-  
+
     // Add elements to the header
-    header.child(resetButton);
-    header.child(title);
-    header.child(shareButton);
-  
+    const titleContainer = createElement('div').addClass('title-container');
+    titleContainer.child(resetButton);
+    titleContainer.child(title);
+    titleContainer.child(shareButton);
+    header.child(titleContainer)
+
     // Add the header to the body
     document.body.prepend(header.elt);
-  }  
+}
+
+function appendShare(header) {
+    // check if already appended
+    const shareContainer = select('.share-container');
+    if (shareContainer) {
+        console.log("already added");
+        return;
+    }
+    
+    // resize the header into spacer
+    headerHeight = headerH + spacerH;
+    spacerHeight = 0;
+    header.style('height', `${headerHeight}px`);
+    const spacer = select('#spacer');
+    spacer.style('height', `${spacerHeight}px`);
+
+    // create and append the share ui
+    const container = createElement('div');
+    container.addClass('share-container');
+
+    // Create the back button
+    const backButton = createButton('Back');
+    backButton.addClass('back-button');
+
+    function removeShare() {
+        container.remove();
+        headerHeight = headerH;
+        spacerHeight = spacerH;
+        header.style('height', `${headerHeight}px`);
+        spacer.style('height', `${spacerHeight}px`);
+    }
+    backButton.mousePressed(() => {
+        removeShare();
+    });
+    backButton.touchEnded(() => {
+        removeShare();
+    });
+
+    // Create the print button
+    const printButton = createButton('Print');
+    printButton.addClass('print-button');
+
+    // Create the input boxes
+    const titleInput = createInput('');
+    titleInput.attribute('placeholder', 'Title');
+    titleInput.addClass('input-box');
+
+    const authorInput = createInput('');
+    authorInput.attribute('placeholder', 'Author');
+    authorInput.addClass('input-box');
+
+    // wrap input boxes in container
+    const inputContainer = createElement('div');
+    inputContainer.addClass('input-container');
+    inputContainer.child(titleInput)
+    inputContainer.child(authorInput)
+
+    // Add elements to the container
+    container.child(backButton);
+    container.child(inputContainer);
+    container.child(printButton);
+
+    // Append the container to the header
+    header.child(container);
+
+    return container;
+}
 
 function setupSquiggle() {
-    const canvas = createCanvas(windowWidth, windowHeight - footerHeight - headerHeight); // Adjust canvas height to exclude footer
+    const canvas = createCanvas(windowWidth, windowHeight - footerH - (spacerH + headerH)); // Adjust canvas height to exclude footer
     canvas.parent('canvas-container');
     // Create an off-screen renderer for the SVG output
     offScreenRenderer = createGraphics(width, height, SVG);
@@ -126,7 +204,7 @@ function setupFooter() {
     // Add UI controls to the footer
     const footer = select('#footer');
     footer.addClass('footer');
-    footer.style('height', `${footerHeight}px`);
+    footer.style('height', `${footerH}px`);
     const controlsContainer = createElement('div').addClass('controls-container');
     controlsContainer.child(createControlGroup(lengthInput, lengthCircle));
     controlsContainer.child(createControlGroup(turnInput, turnCircle));
@@ -357,7 +435,7 @@ function createCircle(label, color) {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight - footerHeight - headerHeight);
+    resizeCanvas(windowWidth, windowHeight - footerH - (spacerH + headerH));
 }
 
 // API POST
