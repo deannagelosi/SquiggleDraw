@@ -26,6 +26,7 @@ def plot_svg(axi, svg_string):
     new_width = 400
     ratio = height / width
     new_height = ratio * new_width
+    print(f"new w: {width}, new h {height}")
     scale_x = new_width / width
     scale_y = new_height / height
     # translate_x = (new_width - width * scale_x) / 2
