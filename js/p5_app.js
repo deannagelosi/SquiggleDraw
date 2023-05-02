@@ -3,23 +3,8 @@
 // source: converted from https://github.com/deannagelosi/squiggle_generator
 
 // todo: 
-// - add button to createFooter (see chat)
-// - use code in js/script.js to add sending svgData to POST
-// - add handling the svgData field to aws and pi db
-// - print the svg on the thermal printer
-// - canvas size (padding/boarder?)
-// - when saving svg, send to POST endpoint
-// - add button to save svg
-// - seed: reset seed back to 1 anytime parameters change
-// - knobs for parameters 
-//   - length: combination of steps and distance
-//   - turn: maxTurn value
-// - HTML sliders
-// - UI for parameters
-// - author and project title
-// - seed, length, turn
-// - randomize parameters and button
-// - axidraw scales the svg to fit (width and height) before drawing
+// - show error message on ui if missing or incorrect invite key
+// - show success or fail messages on ui for sent squiggles
 // - dont let user type a value into the input box that exceed/is less than the slider range
 
 
@@ -45,19 +30,29 @@ let svgData;
 let author;
 let title;
 
+// circle UI
+let intervalId;
+
 // UI vars
 let lengthSlider, lengthInput;
 let turnSlider, turnInput;
 let compressSlider, compressInput;
 
 function setup() {
-    // UI setup
+    setupHeader();
+    setupSquiggle();
+    setupFooter();
+}
+
+function setupHeader() {
+
+}
+
+function setupSquiggle() {
     const canvas = createCanvas(windowWidth, windowHeight - 200); // Adjust canvas height to exclude footer
     canvas.parent('canvas-container');
     // Create an off-screen renderer for the SVG output
     offScreenRenderer = createGraphics(width, height, SVG);
-
-    createFooter();
 
     turnRadius.selected = (turnRadius.min + turnRadius.max) / 2;
     length.selected = (length.min + length.max) / 2;
@@ -74,6 +69,27 @@ function setup() {
     bigThreshold = 0.80; // Higher percent, more loops
     seed = 1; // increment on each attempt
     showField = false;
+}
+
+function setupFooter() {
+    // Create input boxes
+    lengthInput = createInputBox(50);
+    turnInput = createInputBox(50);
+    compressInput = createInputBox(50);
+
+    // Create and set up circles
+    lengthCircle = createCircleButton('Length', color(255, 0, 0), updateLengthValue);
+    turnCircle = createCircleButton('Turn Radius', color(0, 255, 0), updateTurnValue);
+    compressCircle = createCircleButton('Compression', color(0, 0, 255), updateCompressValue);
+
+    // Add UI controls to the footer
+    const footer = select('#footer');
+    footer.child(lengthInput);
+    footer.child(lengthCircle);
+    footer.child(turnInput);
+    footer.child(turnCircle);
+    footer.child(compressInput);
+    footer.child(compressCircle);
 }
 
 function draw() {
@@ -213,109 +229,55 @@ class Point {
 }
 
 // UI functions
-function createFooter() {
-    // Create sliders
-    lengthSlider = createSlider(0, 100, 50);
-    turnSlider = createSlider(0, 100, 50);
-    compressSlider = createSlider(0, 100, 50);
-    // Set value change handlers
-    lengthSlider.input(updateLengthValue);
-    turnSlider.input(updateTurnValue);
-    compressSlider.input(updateCompressValue);
-
-    // Create input boxes
-    lengthInput = createInputBox(lengthSlider);
-    turnInput = createInputBox(turnSlider);
-    compressInput = createInputBox(compressSlider);
-
-    // Build the length controls
-    const lengthUIContainer = createElement('div').addClass('slider-container');
-    lengthUIContainer.child(createLabel('Length'));
-    lengthUIContainer.child(lengthSlider);
-    lengthUIContainer.child(lengthInput);
-
-    // Build the turn controls
-    const turnUIContainer = createElement('div').addClass('slider-container');
-    turnUIContainer.child(createLabel('Turn Radius'));
-    turnUIContainer.child(turnSlider);
-    turnUIContainer.child(turnInput);
-
-    // Build the compress controls
-    const compressUIContainer = createElement('div').addClass('slider-container');
-    compressUIContainer.child(createLabel('Compression'));
-    compressUIContainer.child(compressSlider);
-    compressUIContainer.child(compressInput);
-
-    // Add UI controls to the footer
-    const footer = select('#footer');
-    footer.child(lengthUIContainer);
-    footer.child(turnUIContainer);
-    footer.child(compressUIContainer);
-
-    // Create and center the "Send" button
-    const buttonContainer = createElement('div').addClass('button-container');
-    const sendButton = createButton('Send');
-    sendButton.mouseClicked(() => {
-        sendData();
-    });
-
-    buttonContainer.child(sendButton);
-    footer.child(buttonContainer);
-}
-
 function createLabel(name) {
     const label = createElement('span', name);
     label.style('margin-right', '10px');
     return label;
 }
 
-function createInputBox(slider) {
-    const inputBox = createInput(slider.value().toString());
-    inputBox.style('margin-left', '10px');
-    inputBox.style('width', '60px');
-    inputBox.input(() => {
-        slider.value(parseInt(inputBox.value()));
-    });
+function createInputBox(value) {
+    const inputBox = createInput(value.toString());
+    inputBox.attribute('type', 'number');
+    inputBox.attribute('min', '1');
+    inputBox.attribute('max', '100');
+    inputBox.addClass('input-field');
     return inputBox;
 }
 
+function createCircleButton(label, color, updateFunction) {
+    const circle = createButton('');
+    circle.addClass('circle-button');
+    circle.style('background-color', color);
+    circle.mousePressed(() => {
+        intervalId = setInterval(updateFunction, 100);
+    });
+    circle.mouseReleased(() => {
+        clearInterval(intervalId);
+    });
+    return circle;
+}
+
 function updateLengthValue() {
-    lengthFactor = lengthSlider.value();
-    lengthInput.value(lengthFactor);
-
-    let newLength = remap(lengthFactor, 0, 100, length.min, length.max)
-    length.selected = newLength;
-
-    // Draw squiggle with new length
-    loop();
+    const value = parseInt(lengthInput.value());
+    lengthInput.value((value === 100 ? 1 : value + 1).toString());
+    const colorValue = map(value, 1, 100, 0, 255);
+    lengthCircle.style('background-color', color(255, 0, 0, colorValue));
 }
 
 function updateTurnValue() {
-    currentTurn = turnSlider.value();
-    turnInput.value(currentTurn);
-
-    // translate slider value to max turn value and redraw
-    let piMod = remap(currentTurn, 0, 100, turnRadius.min, turnRadius.max);
-    turnRadius.selected = piMod;
-
-    // Reset to the start and search for squiggle
-    seed = 1;
-    loop();
+    const value = parseInt(turnInput.value());
+    turnInput.value((value === 100 ? 1 : value + 1).toString());
+    const colorValue = map(value, 1, 100, 0, 255);
+    turnCircle.style('background-color', color(0, 255, 0, colorValue));
 }
 
 function updateCompressValue() {
-    currentCompress = compressSlider.value();
-    compressInput.value(currentCompress);
-
-    let newMin = remap(currentCompress, 0, 100, pDistance.min[0], pDistance.max[0]);
-    let newMax = remap(currentCompress, 0, 100, pDistance.min[1], pDistance.max[1]);
-    let newRange = [newMin, newMax];
-    pDistance.selected = newRange;
-
-    // Reset to the start and search for squiggle
-    seed = 1;
-    loop();
+    const value = parseInt(compressInput.value());
+    compressInput.value((value === 100 ? 1 : value + 1).toString());
+    const colorValue = map(value, 1, 100, 0, 255);
+    compressCircle.style('background-color', color(0, 0, 255, colorValue));
 }
+
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);

@@ -39,3 +39,22 @@ body {
   width: 80%;
   margin-bottom: 10px;
 }
+
+.input-field {
+  margin-bottom: 10px;
+  width: 80px;
+  text-align: center;
+}
+
+.circle-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 10px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
