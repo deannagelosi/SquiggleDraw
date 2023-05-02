@@ -39,7 +39,7 @@ let turnCircle, turnInput, turnColors;
 let compressCircle, compressInput, compressColors;
 const headerH = 60
 const spacerH = 90
-const footerH = 200;
+const footerH = 175;
 let headerHeight = headerH;
 let spacerHeight = spacerH;
 
@@ -190,7 +190,12 @@ function setupSquiggle() {
     // squiggle setup
     centerX = width / 2;
     centerY = height / 2;
-    buffer = 35; // boarder margin in pixels
+    buffer = { // boarder margin in pixels
+        left: 30,
+        right: 30,
+        top: 10,
+        bottom: 30
+    };
     zScale = 100.0; // zoom level on Perlin noise field
     bigThreshold = 0.80; // Higher percent, more loops
     seed = 1; // increment on each attempt
@@ -204,13 +209,14 @@ function setupFooter() {
     compressInput = createInputBox(50);
 
     // Create and set up circles
-    lengthCircle = createCircle('Length', color(255, 0, 0));
-    turnCircle = createCircle('Turn Radius', color(0, 255, 0));
-    compressCircle = createCircle('Compression', color(0, 0, 255));
-
     lengthColors = [color(255, 0, 0), color(255, 165, 0)];
     turnColors = [color(0, 255, 0), color(0, 128, 0)];
     compressColors = [color(0, 0, 255), color(75, 0, 130)];
+
+    lengthCircle = createCircle('Length', lengthColors);
+    turnCircle = createCircle('Turn Radius', turnColors);
+    compressCircle = createCircle('Compression', compressColors);
+
 
     // handle circle and input box changes
     handleValueChange(lengthInput, lengthCircle, lengthColors);
@@ -436,7 +442,7 @@ function showPerlinField() {
 }
 
 function checkBounds(px, py) {
-    return !(px >= width - buffer || px <= buffer || py >= height - buffer || py <= buffer);
+    return !(px >= width - buffer.right || px <= buffer.left || py >= height - buffer.bottom || py <= buffer.top);
 }
 
 function piValue(turnMod) {
@@ -472,10 +478,10 @@ function createInputBox(value) {
     return inputBox;
 }
 
-function createCircle(label, color) {
+function createCircle(label, colors) {
     const circle = createButton('');
     circle.addClass('circle-button');
-    circle.style('background-color', color);
+    updateColor(circle, 50, colors)
 
     // pick correct svg img path
     let svgPath
