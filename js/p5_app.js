@@ -35,8 +35,8 @@ let circlePressInterval;
 let lengthCircle, lengthInput, lengthColors;
 let turnCircle, turnInput, turnColors;
 let compressCircle, compressInput, compressColors;
-const headerH = 60
-const spacerH = 90
+const headerH = 60;
+const spacerH = 90;
 const footerH = 175;
 let headerHeight = headerH;
 let spacerHeight = spacerH;
@@ -66,9 +66,9 @@ function setupHeader() {
         lengthInput.value(50);
         turnInput.value(50);
         compressInput.value(50);
-        updateColor(lengthCircle, 50, lengthColors)
-        updateColor(turnCircle, 50, turnColors)
-        updateColor(compressCircle, 50, compressColors)
+        updateColor(lengthCircle, 50, lengthColors);
+        updateColor(turnCircle, 50, turnColors);
+        updateColor(compressCircle, 50, compressColors);
         // update squiggle drawing
         updateSquiggle();
     });
@@ -92,7 +92,7 @@ function setupHeader() {
     titleContainer.child(resetButton);
     titleContainer.child(title);
     titleContainer.child(shareButton);
-    header.child(titleContainer)
+    header.child(titleContainer);
 
     // Add the header to the body
     document.body.prepend(header.elt);
@@ -146,6 +146,7 @@ function appendShare(header) {
     const titleInput = createInput('');
     titleInput.attribute('placeholder', 'Title');
     titleInput.addClass('input-box');
+    titleInput.addClass('title-input');
     console.log(titleInput.value());
     titleInput.input(() => {
         title = titleInput.value();
@@ -154,6 +155,7 @@ function appendShare(header) {
     const authorInput = createInput('');
     authorInput.attribute('placeholder', 'Author');
     authorInput.addClass('input-box');
+    authorInput.addClass('author-input');
     authorInput.input(() => {
         author = authorInput.value();
     });
@@ -161,8 +163,8 @@ function appendShare(header) {
     // wrap input boxes in container
     const inputContainer = createElement('div');
     inputContainer.addClass('input-container');
-    inputContainer.child(titleInput)
-    inputContainer.child(authorInput)
+    inputContainer.child(titleInput);
+    inputContainer.child(authorInput);
 
     // Add elements to the container
     container.child(backButton);
@@ -246,17 +248,17 @@ function handleValueChange(inputBox, circle, colors) {
         let value = Math.floor(parseInt(inputBox.value()));
         // limit out of bounds
         if (value > 100) {
-            value = 100
+            value = 100;
             inputBox.value(value.toString());
         } else if (value < 1) {
-            value = 1
+            value = 1;
             inputBox.value(value.toString());
         } else if (inputBox.value() === '') {
             // leave empty in ui if empty
-            value = 1
+            value = 1;
         }
         // update circle color 
-        updateColor(circle, value, colors)
+        updateColor(circle, value, colors);
 
         // update squiggle
         updateSquiggle();
@@ -271,16 +273,16 @@ function handleValueChange(inputBox, circle, colors) {
         // increment up or down
         let i = parseInt(inputBox.attribute('data-i'));
         if (value >= 100) {
-            i = -1
+            i = -1;
         } else if (value <= 1) {
-            i = 1
+            i = 1;
         }
         inputBox.attribute('data-i', i.toString());
         // update value
         value = value + i;
         inputBox.value(value.toString());
         // update circle color
-        updateColor(circle, value, colors)
+        updateColor(circle, value, colors);
 
         // update squiggle
         updateSquiggle();
@@ -302,7 +304,7 @@ function handleValueChange(inputBox, circle, colors) {
 function updateSquiggle() {
     // Update Length
     lengthValue = lengthInput.value();
-    let newLength = remap(lengthValue, 0, 100, length.min, length.max)
+    let newLength = remap(lengthValue, 0, 100, length.min, length.max);
     length.selected = newLength;
     // Update Turn
     turnValue = turnInput.value();
@@ -444,7 +446,7 @@ function checkBounds(px, py) {
 }
 
 function piValue(turnMod) {
-    return (turnMod * PI) + (PI / 8)
+    return (turnMod * PI) + (PI / 8);
 }
 
 function remap(value, oldMin, oldMax, newMin, newMax) {
@@ -479,10 +481,10 @@ function createInputBox(value) {
 function createCircle(label, colors) {
     const circle = createButton('');
     circle.addClass('circle-button');
-    updateColor(circle, 50, colors)
+    updateColor(circle, 50, colors);
 
     // pick correct svg img path
-    let svgPath
+    let svgPath;
     switch (label) {
         case "Length":
             svgPath = '../img/length.svg';
@@ -527,10 +529,10 @@ async function sendData() {
     const inviteKeyParam = urlParams.get("inviteKey");
 
     if (!title) {
-        title = "Untitled"
+        title = "Untitled";
     }
     if (!author) {
-        author = "Unknown"
+        author = "Unknown";
     }
 
     const request = {
@@ -547,7 +549,7 @@ async function sendData() {
             })
         },
     };
-    const requestBody = JSON.stringify(request)
+    const requestBody = JSON.stringify(request);
 
     console.log("Request:");
     console.log(requestBody);
@@ -565,15 +567,38 @@ async function sendData() {
         const responseBody = JSON.parse(jsonResponse.body);
         console.log("Response:", responseBody.message);
 
-        // message.textContent = "Successfully submitted!";
-        // message.style.color = "green";
-        // form.reset();
+        showMessage('Success: Squiggle sent!', true);
     } else {
         const jsonResponse = await response.json();
         const responseBody = JSON.parse(jsonResponse.body);
         console.log("Error:", responseBody.message);
 
-        // message.textContent = "Error";
-        // message.style.color = "red";
+        showMessage(`Error: ${responseBody.message}`, false);
     }
 };
+
+function showMessage(message, success) {
+    const messageElem = createElement('div', message);
+    messageElem.addClass('message');
+
+    if (success) {
+        messageElem.addClass('success-message');
+    } else {
+        messageElem.addClass('error-message');
+    }
+
+    // Replace the contents of input container for 3 seconds
+    const inputContainer = select('.input-container');
+    const titleInput = select('.title-input');
+    const authorInput = select('.author-input');
+
+    titleInput.hide();
+    authorInput.hide();
+    inputContainer.child(messageElem);
+
+    setTimeout(() => {
+        messageElem.remove();
+        titleInput.show();
+        authorInput.show();
+    }, 3000); // Remove the message after 3 seconds
+}

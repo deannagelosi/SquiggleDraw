@@ -83,6 +83,24 @@ body {
   border-radius: 4px;
 }
 
+.message {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+}
+
+.success-message {
+    background-color: #28a745;
+    color: white;
+}
+
+.error-message {
+    background-color: #dc3545;
+    color: white;
+}
+
 #canvas-container {
   display: flex;
   justify-content: center;
