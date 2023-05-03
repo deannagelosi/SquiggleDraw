@@ -4,11 +4,11 @@ Contributor: Deanna Gelosi
 
 ## Overview
 
-Generate a scribble drawing on your phone and see a robot draw it live! Each drawing produces with a receipt documenting how it was created. SquiggleDraw uses an [AxiDraw](https://www.axidraw.com/) and thermal receipt printer controlled from your phone with a web app. Click the [web app](https://main.d3m6znb1by1y42.amplifyapp.com/?inviteKey=) to get started (invite key required)
+Generate a scribble drawing on your phone and see a robot draw it live! Each drawing produces a receipt documenting how it was created. SquiggleDraw uses an [AxiDraw](https://www.axidraw.com/) and thermal receipt printer controlled from your phone with a web app. Click the [web app](https://main.d3m6znb1by1y42.amplifyapp.com/?inviteKey=) to get started (invite key required).
 
-**Languages**: Python3, HTML/CSS, Javascript
+**Languages**: Python3, HTML/CSS, Javascript, QML
 
-**Libraries**: Adafruit Thermal Printer library, p5.js, AxiDraw Python API library
+**Libraries**: Adafruit Thermal Printer library, p5.js, AxiDraw Python API library, PyQt
 
 **Development Environments**: VS Code, Figma, TablePlus
 
@@ -16,7 +16,7 @@ Generate a scribble drawing on your phone and see a robot draw it live! Each dra
 
 <img align="center" src="img/squiggledraw.png">
 <p align = "center">
-Fig.1 - A workflow of SquiggleDraw, starting with 1) the movible UI, 2) the AxiDraw CNC plotter, 3) the final drawing, and 4) the receipt documenting squiggle parameters.
+Fig.1 - A workflow of SquiggleDraw, starting with 1) the mobile UI, 2) the AxiDraw CNC plotter, 3) the final drawing, and 4) the receipt documenting squiggle parameters.
 </p>
 
 ## Features
@@ -28,7 +28,7 @@ SquiggleDraw is an AWS Amplify app that creates generative scribble drawings bas
 2. Turn radius: ranges between 1/4 $\pi$ and $\pi$
 3. Compression: the space between points that make up a line
 
-The app connects to a AWS Dyanmo DB which stores the parameters and other user defined values (title and author) and sends it to a queue. The queue is hosted on a Raspberry Pi and allows for job selection.
+The app connects to a AWS Dynamo DB which stores the parameters and other user defined values (title and author) and sends it to a queue. The queue reads from a Postgres database hosted on a Raspberry Pi which also controls the AxiDraw, thermal printer, and LCD control interface.
 
 Once a job is chosen, the AxiDraw recreates the scribble on paper and a thermal printer creates a receipt documenting the user selected parameters.
 
@@ -41,7 +41,7 @@ Visit the mobile [web app](https://main.d3m6znb1by1y42.amplifyapp.com/?inviteKey
 
 ### Raspberry Pi and LCD screen
 
-Start the Raspberry Pi by initiating an ssh connection.
+On the Raspberry Pi, initiate the AWS connection.
 
 ```zsh
 python3 rasp_pi/connect_AWS.py
@@ -69,4 +69,4 @@ tailscale ip -4
 
 Connect the AxiDraw to the Raspberry Pi using USB.
 
-Connect the thermal printer to the Raspberry Pi using a serial connection
+Connect the thermal printer to the Raspberry Pi using a serial connection.
