@@ -38,6 +38,8 @@ Rectangle {
             text: styleData.value
             color: "black"
             anchors.verticalCenter: parent.verticalCenter
+            elide: Text.ElideRight
+            width: tableView.getColumn(styleData.column).width - 10
         }
 
         TableViewColumn {
