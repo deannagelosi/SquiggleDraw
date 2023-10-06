@@ -586,6 +586,7 @@ async function sendData() {
         }
     } catch (error) {
         console.error("Error:", error.message);
+        console.error("Response: ", response);
         printButton.removeAttribute('disabled'); // Re-enable the print button on a failure
     }
 };
