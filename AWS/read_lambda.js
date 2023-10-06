@@ -7,7 +7,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 // Create a DynamoDB client and a document client
-const client = new DynamoDBClient({ region: "us-west-2" });
+const client = new DynamoDBClient({ region: "us-east-1" });
 const documentClient = DynamoDBDocumentClient.from(client);
 
 // Lambda function handler
