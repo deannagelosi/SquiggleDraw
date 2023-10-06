@@ -9,3 +9,6 @@ __pycache__
 
 # DS_Store
 .DS_Store
+
+# ATLAS Expo Day
+/expo-day 
