@@ -70,3 +70,10 @@ tailscale ip -4
 Connect the AxiDraw to the Raspberry Pi using USB.
 
 Connect the thermal printer to the Raspberry Pi using a serial connection.
+
+## System Diagram
+
+<img align="center" src="img/system-diagram.jpg">
+<p align = "center">
+Fig.2 - The system diagram for SquiggleDraw containing both the AWS and Raspberry Pi setup.
+</p>
