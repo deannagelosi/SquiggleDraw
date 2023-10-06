@@ -37,7 +37,7 @@ export async function handler(event) {
 
         // Set up parameters for the DynamoDB PutItem operation
         const params = {
-            TableName: 'iot23_db_superproject_dege',
+            TableName: 'squiggle_aws_db',
             Item: {
                 "datetime": data.datetime,
                 "new_squiggle": 1,
