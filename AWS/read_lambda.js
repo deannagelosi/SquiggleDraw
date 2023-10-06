@@ -31,7 +31,7 @@ export async function handler(event) {
 async function getRecordsWithNewSquiggle() {
     // Define the query parameters
     const queryParams = {
-        TableName: "iot23_db_superproject_dege", // DynamoDB table name
+        TableName: "squiggle_aws_db", // DynamoDB table name
         IndexName: "NewSquiggleIndex", // Global Secondary Index name
         KeyConditionExpression: "new_squiggle = :new_squiggle", // Query condition (new_squiggle = value)
         ExpressionAttributeValues: {
@@ -55,7 +55,7 @@ async function getRecordsWithNewSquiggle() {
 async function updateNewSquiggle(records) {
     for (const record of records) {
         const updateParams = {
-            TableName: "iot23_db_superproject_dege",
+            TableName: "squiggle_aws_db",
             Key: {
                 "author": record.author, // Partition key
                 "datetime": record.datetime, // Sort key
