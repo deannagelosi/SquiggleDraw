@@ -561,7 +561,8 @@ async function sendData() {
 
     const printButton = select('.print-button');
     try {
-        const response = await fetch("https://4ko9ppstm2.execute-api.us-west-2.amazonaws.com/prod/squiggle/", {
+        const API_ENDPOINT = process.env.API_ENDPOINT;
+        const response = await fetch(API_ENDPOINT, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
