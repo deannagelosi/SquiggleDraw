@@ -9,28 +9,22 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 // example POST request
 // {
-//     "squiggle": {
-//         "datetime": "2023-04-15T12:34:56",
-//         "author": "Deanna",
-//         "svgData": "<svg info>"
-//         "squiggleParams": "{json}"
-//     }
-//  }
+//      "inviteKey": "key",
+//      "squiggle": {
+//          "datetime": "2023-04-15T12:34:56",
+//          "author": "Deanna",
+//          "svgData": "<svg info>"
+//          "squiggleParams": "{json}"
+//      }
+// }
 
 export async function handler(event) {
     const inviteKey = process.env.INVITEKEY;
     const receivedInviteKey = event.inviteKey;
     
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-    };
-    
     if (receivedInviteKey != inviteKey) {
         const response = {
             statusCode: 401,
-            headers: headers,
             body: JSON.stringify({ message: "Invalid invite key." }),
         };
         return response; // script stops
@@ -62,7 +56,6 @@ export async function handler(event) {
             // Create a response that returns the same POST body
             const response = {
                 statusCode: 200, // success
-                headers: headers,
                 body: JSON.stringify({message: data}),
             };
             return response;
@@ -70,7 +63,6 @@ export async function handler(event) {
             // Create an error response
             const response = {
                 statusCode: 500, // server error
-                headers: headers,
                 body: JSON.stringify({ 
                     message: 'An error occurred while adding the item to the DynamoDB table.',
                     received: data,
@@ -83,7 +75,6 @@ export async function handler(event) {
         // Return an error response if event.squiggle is undefined
         const response = {
             statusCode: 400, // user error
-            headers: headers,
             body: JSON.stringify({ 
                 message: 'Invalid event.',
                 event: event
